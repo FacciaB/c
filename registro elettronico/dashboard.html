@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClasseViva - Registri e Didattica Multimediale</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        
+        /* Stili Header Rosso */
+        .header {
+            background-color: #d8232a; /* Rosso ClasseViva */
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left span {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        /* Modifiche per Allineamento Orizzontale dell'Header a Destra */
+        .header-right {
+            display: flex;
+            align-items: center;
+            font-size: 0.85em;
+            gap: 15px; 
+        }
+        
+        .user-info {
+            text-align: right;
+            line-height: 1.2;
+            display: block; 
+            font-weight: bold;
+        }
+        
+        #username-line {
+            display: block;
+            white-space: nowrap; 
+            font-size: 1.1em;
+        }
+        #matricola-line {
+            display: block;
+            white-space: nowrap;
+            font-size: 1em;
+        }
+        
+        .user-icon {
+            background-color: white;
+            color: #4a148c; 
+            border-radius: 50%;
+            padding: 5px; 
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.5em; 
+        }
+        
+        .exit-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em; 
+            white-space: nowrap;
+        }
+        
+        .last-access {
+            font-size: 0.7em;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        /* Stili Contenuto Principale */
+        .main-content {
+            padding: 20px;
+        }
+        
+        /* Stili per i Link del Menu */
+        .menu-link {
+            text-decoration: none; /* Rimuove la sottolineatura dai link del menu */
+            color: inherit; /* Eredita il colore del testo */
+            display: block; /* Fa sì che il link occupi l'intera larghezza */
+        }
+
+        .new-management {
+            display: flex;
+            align-items: center;
+            background-color: #e6e6e6;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #d8232a;
+        }
+        .new-management p {
+            margin: 0;
+            font-weight: bold;
+            color: #333;
+        }
+        .new-management .play-icon {
+            margin-right: 10px;
+            font-size: 1.5em;
+            color: #d8232a;
+        }
+        .novita {
+            background-color: #fffff0;
+            padding: 10px;
+            border: 1px solid #ffcc00;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .novita span {
+            color: #d8232a;
+            font-weight: bold;
+        }
+
+        .menu-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .item-details {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+        
+        .item-icon {
+            font-size: 1.8em; 
+            width: 40px;
+            text-align: center;
+            color: #d8232a; 
+        }
+        
+        .item-text {
+            margin-left: 15px;
+        }
+        .item-text h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: #333; 
+            font-weight: normal;
+        }
+        .item-text p {
+            margin: 0;
+            font-size: 0.85em;
+            color: #666;
+        }
+        .item-text .main-label {
+             font-size: 0.7em; 
+             color: #d8232a; 
+             font-weight: bold;
+        }
+        
+        .item-action {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            color: #1aae6b;
+        }
+        
+        .help-icon {
+            font-size: 1.5em;
+            color: #1aae6b; 
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        
+        /* Colori e icone specifiche simulate con testo */
+        .icon-year::before { content: '📅'; color: #d8232a; }
+        .icon-agenda::before { content: '🗓️'; color: #007bff; }
+        .icon-book::before { content: '📚'; color: #FF9800; }
+        .icon-classes::before { content: '🏫'; color: #2196F3; }
+        .icon-didattica::before { content: '🖥️'; color: #9C27B0; }
+        .icon-bacheca::before { content: '📌'; color: #607D8B; }
+        .icon-scrutinio::before { content: '⚖️'; color: #F44336; }
+        .icon-colloqui::before { content: '👥'; color: #d8232a; }
+        .icon-verbale::before { content: '📝'; color: #00BCD4; }
+        
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <span style="font-size: 1.5em; font-weight: bold;">CLASSEVIVA</span>
+            <span style="margin-left: 15px;">Registri e Didattica multimediale</span>
+        </div>
+        <div class="header-right">
+            <a href="#" id="exit-link" class="exit-btn">Esci</a>
+            <div class="user-info">
+                <span id="username-line">CARICAMENTO NOME...</span>
+                <span id="matricola-line">CARICAMENTO CODICE...</span>
+            </div>
+            <div class="user-icon">👤</div>
+        </div>
+    </div>
+    
+    <div style="background-color: #ffcc00; color: white; padding: 5px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div class="last-access">ultimo accesso: 10-10 ora 11:46</div>
+    </div>
+
+    <div class="main-content">
+        <div class="menu-container">
+            
+            <div class="new-management">
+                <span class="play-icon">▶</span>
+                <p>La nuova gestione competenze: La valutazione oltre il semplice voto</p>
+                <div style="margin-left: auto; color: #d8232a; font-weight: bold; font-size: 1.5em;">CLASSEVIVA</div>
+            </div>
+
+            <div class="novita">
+                💡 &gt;&gt;&gt; **NOVITÀ**: Agenda personale del docente. Clicca qui per vedere il video illustrativo! &lt;&lt;&lt;
+            </div>
+
+            <a href="anno_precedente.html" class="menu-link">
+                <div class="menu-item">
+                    <div class="item-details">
+                        <div class="item-icon icon-year"></div>
+                        <div class="item-text">
+                            <span class="main-label">ANNO PRECEDENTE</span>
+                            <h3>Vai all'a.s. 2018/2019</h3>
+                            <p>Vai all'anno precedente</p>
+                        </div>
+                    </div>
+                    <div class="item-action">
+                        <span class="help-icon">?</span>
+                        <span style="font-size: 0.8em;">Aiuto</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="agenda.html" class="menu-link">
+                <div class="menu-item">
+                    <div class="item-details">
+                        <div class="item-icon icon-agenda"></div>
+                        <div class="item-text">
+                            <span class="main-label">AGENDA</span>
+                            <h3>La mia agenda personale</h3>
+                            <p>Consulta tutti i tuoi impegni</p>
+                        </div>
+                    </div>
+                    <div class="item-action">
+                        <span class="help-icon">?</span>
+                        <span style="font-size: 0.8em;">Aiuto</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="adozioni.html" class="menu-link">
+                <div class="menu-item">
+                    <div class="item-details">
+                        <div class="item-icon icon-book"></div>
+                        <div class="item-text">
+                            <span class="main-label">ADOZIONI</span>
+                            <h3>Adozioni libri di testo</h3>
+                            <p>Adozioni libri di testo nelle mie classi</p>
+                        </div>
+                    </div>
+                    <div class="item-action">
+                        <span class="help-icon">?</span>
+                        <span style="font-size: 0.8em;">Aiuto</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="mie_classi.html" class="menu-link">
+                <div class="menu-item">
+                    <div class="item-details">
+                        <div class="item-icon icon-classes"></div>
+                        <div class="item-text">
+                            <span class="main-label">LE MIE CLASSI</span>
+                            <h3>Registro delle mie classi</h3>
+                            <p>Compila il registro delle classi associate</p>
+                        </div>
+                    </div>
+                    <div class="item-action">
+                        <span class="help-icon">?</span>
+                        <span style="font-size: 0.8em;">Aiuto</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="tutte_classi.html" class="menu-link">
+                <div class="menu-item">
+                    <div class="item-details">
+                        <div class="item-icon icon-classes"></div>
+                        <div class="item-text">
+                            <span class="main-label">TUTTE LE CLASSI</span>
+                            <h3>Registro di tutte le classi</h3>
+                            <p>Seleziona e compila i registri di classe</p>
+                        </div>
+                    </div>
+                    <div class="item-action">
+                        <span class="help-icon">?</span>
+                        <span style="font-size: 0.8em;">Aiuto</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="didattica.html" class="menu-link">
+                <div class="menu-item">
+                    <div class="item-details">
+                        <div class="item-icon icon-didattica"></div>
+                        <div class="item-text">
+                            <span class="main-label">DIDATTICA</span>
+                            <h3>Materiale per la didattica</h3>
+                            <p>Accedi ai servizi per la didattica multimediale</p>
+                        </div>
+                    </div>
+                    <div class="item-action">
+                        <span class="help-icon">?</span>
+                        <span style="font-size: 0.8em;">Aiuto</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="bacheca.html" class="menu-link">
+                <div class="menu-item">
+                    <div class="item-details">
+                        <div class="item-icon icon-bacheca"></div>
+                        <div class="item-text">
+                            <span class="main-label">BACHECA</span>
+                            <h3>Consulta la bacheca</h3>
+                            <p>Visualizza i messaggi in bacheca</p>
+                        </div>
+                    </div>
+                    <div class="item-action">
+                        <span class="help-icon">?</span>
+                        <span style="font-size: 0.8em;">Aiuto</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="scrutinio.html" class="menu-link">
+                <div class="menu-item">
+                    <div class="item-details">
+                        <div class="item-icon icon-scrutinio"></div>
+                        <div class="item-text">
+                            <span class="main-label">SCRUTINIO</span>
+                            <h3>Scrutinio 10 e lode</h3>
+                            <p>Scrutinio per le scuole del I ciclo</p>
+                        </div>
+                    </div>
+                    <div class="item-action">
+                        <span class="help-icon">?</span>
+                        <span style="font-size: 0.8em;">Aiuto</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="colloqui.html" class="menu-link">
+                <div class="menu-item">
+                    <div class="item-details">
+                        <div class="item-icon icon-colloqui"></div>
+                        <div class="item-text">
+                            <span class="main-label">COLLOQUI</span>
+                            <h3>Colloqui con la famiglia</h3>
+                            <p>Gestisci i colloqui con la famiglia e lo sportello alunni</p>
+                        </div>
+                    </div>
+                    <div class="item-action">
+                        <span class="help-icon">?</span>
+                        <span style="font-size: 0.8em;">Aiuto</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="verbali.html" class="menu-link">
+                <div class="menu-item">
+                    <div class="item-details">
+                        <div class="item-icon icon-verbale"></div>
+                        <div class="item-text">
+                            <span class="main-label">VER.DI 2.0</span>
+                            <h3>Consulta i verbali</h3>
+                        </div>
+                    </div>
+                    <div class="item-action">
+                        <span class="help-icon">?</span>
+                        <span style="font-size: 0.8em;">Aiuto</span>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const usernameLine = document.getElementById('username-line');
+            const matricolaLine = document.getElementById('matricola-line');
+            const exitLink = document.getElementById('exit-link');
+            
+            // 1. Recupera il nome utente salvato
+            let loggedUsername = localStorage.getItem('loggedUsername');
+
+            if (loggedUsername) {
+                // Rimuove l'estensione ".SCXXXXX"
+                let cleanName = loggedUsername.replace(/\.SC\d+$/i, ''); 
+
+                // Converte le parti del nome (es. pikky.pomodoro) in MAIUSCOLO per l'intestazione
+                let parts = cleanName.split('.');
+                let displayName = parts.map(part => part.toUpperCase()).join(' ');
+
+                // Estrae la matricola/codice numerico (qualsiasi numero dopo .SC)
+                let matricolaMatch = loggedUsername.match(/\.SC(\d+)$/i); 
+                let matricolaDisplay = matricolaMatch ? matricolaMatch[1] : 'CODICE NON DISPONIBILE';
+                
+                // Popola i due span separati
+                usernameLine.textContent = displayName;
+                matricolaLine.textContent = matricolaDisplay;
+
+            } else {
+                // Se non c'è il nome utente, reindirizza al login
+                window.location.href = 'index.html'; 
+                return;
+            }
+
+            // 2. Gestione del pulsante ESCI
+            exitLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Cancella la sessione di login
+                localStorage.removeItem('loggedUsername');
+                // Reindirizza alla pagina di login
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+
+</body>
+</html>

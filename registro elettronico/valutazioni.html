@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClasseViva - Valutazioni</title>
+    <style>
+        /* RIUTILIZZA I TUOI STILI CSS DAL REGISTRO DI CLASSE */
+        
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f7f7f7; color: #333; }
+        .header { background-color: #d8232a; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header-title { font-size: 1.5em; font-weight: bold; margin-right: 20px; text-decoration: none; color: white; }
+        .last-access-bar { background-color: #ffcc00; color: white; padding: 5px 20px; font-size: 0.85em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        .menu-nav-container { background-color: white; padding: 10px 20px; border-bottom: 1px solid #ddd; }
+        .menu-nav { display: flex; justify-content: center; gap: 15px; max-width: 1200px; margin: 0 auto; }
+        .icon-item { text-align: center; font-size: 0.75em; color: #555; cursor: pointer; text-decoration: none; display: block; min-width: 60px; }
+        .icon-active { font-weight: bold; color: #d8232a; }
+        .icon-active > div { border-bottom: 3px solid #d8232a; padding-bottom: 2px; }
+        .content { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .main-info { text-align: center; font-size: 1.3em; font-weight: normal; margin: 20px 0; padding: 10px; background-color: #e8e8e8; border-radius: 4px; }
+        .main-info strong { color: #d8232a; font-weight: bold; }
+        .class-links a { margin-right: 10px; text-decoration: none; color: #007bff; font-weight: normal; }
+        .class-links a.active-class { color: #d8232a; font-weight: bold; border-bottom: 2px solid #d8232a; }
+
+        /* NUOVI STILI PER VALUTAZIONI */
+        .valutazioni-container { display: flex; border: 1px solid #ddd; background-color: white; min-height: 500px; }
+        .student-list-valutazioni { width: 350px; flex-shrink: 0; border-right: 1px solid #eee; overflow-y: auto; }
+        .student-row-valutazioni { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .student-row-valutazioni:hover { background-color: #f9f9f9; }
+        .student-row-valutazioni.selected { background-color: #ffeaea; border-left: 5px solid #d8232a; padding-left: 5px; font-weight: bold; }
+        .student-row-valutazioni .student-name { flex-grow: 1; }
+
+        .evaluations-area { flex-grow: 1; padding: 20px; }
+        .evaluation-header { font-size: 1.2em; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; font-weight: bold; }
+
+        .evaluation-subject-list { display: flex; flex-direction: column; gap: 10px; }
+        
+        .subject-item { background-color: #eee; padding: 15px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+        .subject-item:hover { background-color: #e0e0e0; }
+        .subject-item.selected { background-color: #d8232a; color: white; font-weight: bold; }
+        
+        .subject-info { display: flex; flex-direction: column; text-align: left; }
+        .subject-media { font-size: 1.2em; font-weight: bold; color: #d8232a; background-color: white; padding: 5px 10px; border-radius: 4px; min-width: 40px; text-align: center; }
+        .subject-item.selected .subject-media { color: #d8232a; } /* Inverti i colori se selezionato */
+
+        .grade-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px dashed #eee; font-size: 0.9em; }
+        .grade-row div { padding: 0 10px; }
+        .grade-date { width: 150px; color: #777; }
+        .grade-value { font-weight: bold; color: #d8232a; width: 50px; text-align: center; }
+        .grade-type { width: 100px; }
+        .grade-description { flex-grow: 1; }
+        .grade-row:last-child { border-bottom: none; }
+
+        /* Stili per la materia selezionata (tipo la barra di Educazione Civica) */
+        .materia-selezionata-bar { background-color: #2e2e2e; color: white; padding: 15px 20px; margin-bottom: 20px; font-size: 1.1em; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .materia-selezionata-bar .media-bar { font-size: 1.5em; font-weight: bold; margin-left: 20px; color: #ffcc00; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="registro_classe.html" class="header-title">CLASSEVIVA</a> 
+        <span class="header-center">Valutazioni</span>
+        <div class="user-icon">👤</div>
+    </div>
+    
+    <div class="last-access-bar">
+        Ultimo accesso: 02-12 ora 16:51 (Simulazione)
+    </div>
+
+    <div class="menu-nav-container">
+        <div class="menu-nav">
+            <a href="registro_classe.html" class="icon-item"><div class="i-appello"></div>Appello</a>
+            <a href="registro_classe.html" class="icon-item"><div class="i-comunicazioni"></div>Comunicazioni</a>
+            <a href="registro_classe.html" class="icon-item"><div class="i-agenda"></div>Agenda di oggi</a>
+            <a href="registro_classe.html" class="icon-item"><div class="i-firma"></div>Firma</a>
+            <a href="registro_classe.html" class="icon-item"><div class="i-comprensenza"></div>Comprensenza</a>
+            <a href="registro_classe.html" class="icon-item"><div class="i-assenze"></div>Assenze</a>
+            <a href="registro_classe.html" class="icon-item"><div class="i-registro"></div>Registro</a>
+            <a href="valutazioni.html" class="icon-item icon-active"><div class="i-valutazioni"></div>Valutazioni</a> 
+            <a href="registro_classe.html" class="icon-item"><div class="i-agenda-prof"></div>Agenda</a>
+            <a href="registro_classe.html" class="icon-item"><div class="i-didattica"></div>Didattica</a>
+            <a href="registro_classe.html" class="icon-item" id="classi-link"><div class="i-classi"></div>Le mie classi</a>
+            <a href="registro_classe.html" class="icon-item"><div class="i-tutti"></div>Tutti i gruppi</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="main-info">
+            Valutazioni della classe <strong id="class-detail">1A</strong>
+        </div>
+        
+        <div class="class-links" style="text-align: center; margin-bottom: 15px;">
+            <a href="#" data-class="1A">1A</a>
+            <a href="#" data-class="2A">2A</a>
+            <a href="#" data-class="3A">3A</a>
+            <a href="#" data-class="4A">4A</a>
+            <a href="#" data-class="5A">5A</a>
+        </div>
+
+        <div class="valutazioni-container">
+            <div class="student-list-valutazioni">
+                <div style="padding: 10px; font-weight: bold; font-size: 0.9em; border-bottom: 1px solid #ccc; background-color: #f0f0f0;">
+                    Elenco Alunni
+                </div>
+                <div id="student-names-list">
+                    </div>
+            </div>
+
+            <div class="evaluations-area">
+                <div id="materia-selezionata-container">
+                    </div>
+                
+                <div id="student-name-header" class="evaluation-header">
+                    Seleziona un alunno e una materia
+                </div>
+
+                <div id="evaluations-list">
+                    </div>
+
+                <div id="subject-list" class="evaluation-subject-list">
+                    </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        // --- CHIAVI PER IL SALVATAGGIO LOCALE (LOCALSTORAGE) ---
+        const CURRENT_CLASS_KEY = 'cv_current_class'; 
+        const CURRENT_STUDENT_ID_KEY = 'cv_current_student_id';
+        const EVALUATION_DATA_KEY = 'cv_evaluation_data'; // Nuova chiave per salvare i voti
+
+        // Dati degli alunni (Copiati dal tuo file registro_classe.html)
+        const studentData = {
+            '1A': [
+                { id: 1, name: 'STELLINA DEMATTEIS', date: '01-01-2007' },
+                { id: 2, name: 'PANDINO DEMATTEIS', date: '02-01-2007' },
+                { id: 3, name: 'TARTARUGA BENUA', date: '03-01-2007' },
+                { id: 4, name: 'YUCKY BENUA', date: '04-01-2007' },
+                { id: 5, name: 'LOLLO BENUA', date: '05-01-2007' },
+                { id: 6, name: 'BRICIOLA DEMATTEIS', date: '06-01-2007' },
+                { id: 7, name: 'FLUFFY DEMATTEIS', date: '07-01-2007' },
+                { id: 8, name: 'TINA DEMATTEIS', date: '08-01-2007' },
+                { id: 9, name: 'GRIGETTA BENUA', date: '09-01-2007' },
+                { id: 10, name: 'LUNA DEMATTEIS', date: '10-01-2007' },
+                { id: 11, name: 'LUNA BENUA', date: '11-01-2007' },
+                { id: 12, name: 'KENDY DEMATTEIS', date: '12-01-2007' },
+                { id: 13, name: 'PAPERO DEMATTEIS', date: '13-01-2007' },
+                { id: 14, name: 'ATTIGLIO DEMATTEIS', date: '14-01-2007' },
+                { id: 15, name: 'SUNNY BENUA', date: '15-01-2007' },
+                { id: 16, name: 'CURT DEMATTEIS', date: '16-01-2007' },
+                { id: 17, name: 'BUNNY BENUA', date: '17-01-2007' }
+            ],
+            '2A': [
+                { id: 18, name: 'CANE DEMATTEIS', date: '01-02-2006' },
+                { id: 19, name: 'CANE BENUA', date: '02-02-2006' },
+                { id: 20, name: 'MICIAN DEMATTEIS', date: '03-02-2006' },
+                { id: 21, name: 'CICCIOBELLO TEMPERINI', date: '04-02-2006' },
+                { id: 22, name: 'MAICOL CAROTINI', date: '05-02-2006' },
+                { id: 23, name: 'CATTIVO TEMPERINI', date: '06-02-2006' },
+                { id: 24, name: 'BAMBOLA CAROTINI', date: '07-02-2006' },
+                { id: 25, name: 'ROBOTTINA ROSSETTI', date: '08-02-2006' }
+            ],
+            '3A': [
+                { id: 26, name: 'ALPHA SCARLETTI', date: '01-03-2005' },
+                { id: 27, name: 'BRAVO BIANCHI', date: '02-03-2005' },
+                { id: 28, name: 'CHARLIE NERI', date: '03-03-2005' },
+                { id: 29, name: 'DELTA ROSSI', date: '04-03-2005' },
+                { id: 30, name: 'ECHO VERDI', date: '05-03-2005' },
+                { id: 31, name: 'FOXTROT GIALLI', date: '06-03-2005' }
+            ],
+            '4A': [
+                { id: 32, name: 'GOLF GRIGI', date: '01-04-2004' },
+                { id: 33, name: 'HOTEL VIOLA', date: '02-04-2004' },
+                { id: 34, name: 'INDIA BLU', date: '03-04-2004' },
+                { id: 35, name: 'JULIET MARRONI', date: '04-04-2004' },
+                { id: 36, name: 'KILO ARANCIO', date: '05-04-2004' }
+            ],
+            '5A': [
+                { id: 37, name: 'LIMA ROSA', date: '01-05-2003' },
+                { id: 38, name: 'MIKE AZZURRO', date: '02-05-2003' },
+                { id: 39, name: 'NOVEMBER BEIGE', date: '03-05-2003' },
+                { id: 40, name: 'OSCAR CREMA', date: '04-05-2003' }
+            ]
+        };
+
+        // Dati di valutazione di default (vuoti), saranno sovrascritti dai dati salvati
+        let evaluationData = {
+            1: {}, 
+            2: {}
+        };
+
+        // MATERIE E NOMI DEGLI INSEGNANTI NELL'ORDINE ESATTO RICHIESTO
+        const allSubjects = [
+            'Storia',
+            'Geografia (Pomodoro Pikky, Russa Insalata)', 
+            'Arte (Ananas Pippy)',
+            'Matematica',
+            'Italiano (Dematteis Alessia)',
+            'Recupero e Approfondimento',
+            'Sicurezza',
+            'Accoglienza e Orientamento (Dematteis Enrico)',
+            'Informatica',
+            'Disegno (Ferrari Ferdinando Francesco)'
+        ];
+
+        // Variabili globali
+        let classKey = localStorage.getItem(CURRENT_CLASS_KEY) || '1A'; 
+        let currentStudentId = parseInt(localStorage.getItem(CURRENT_STUDENT_ID_KEY)) || 1; 
+        let currentSubject = null; 
+        
+        // --- GESTIONE DATI PERSISTENTI ---
+        
+        function loadEvaluationData() {
+            const savedData = localStorage.getItem(EVALUATION_DATA_KEY);
+            if (savedData) {
+                try {
+                    // Sovrascrive l'oggetto vuoto di default con i dati salvati
+                    evaluationData = JSON.parse(savedData);
+                } catch (e) {
+                    console.error("Errore nel parsing dei dati di valutazione salvati:", e);
+                    // In caso di errore, si mantiene l'oggetto vuoto
+                    evaluationData = { 1: {}, 2: {} };
+                }
+            }
+        }
+
+        function saveEvaluationData() {
+            try {
+                // Salva l'intero oggetto di valutazione nel localStorage
+                localStorage.setItem(EVALUATION_DATA_KEY, JSON.stringify(evaluationData));
+            } catch (e) {
+                console.error("Errore nel salvataggio dei dati di valutazione:", e);
+                alert("Attenzione: impossibile salvare i voti nel browser.");
+            }
+        }
+
+        // --- FUNZIONE DI UTILITY: CALCOLO MEDIA ---
+        function calculateAverage(grades) {
+            if (!grades || grades.length === 0) {
+                return { display: '--', numeric: NaN };
+            }
+            
+            let sum = 0;
+            let count = 0;
+            let textGrades = [];
+
+            grades.forEach(g => {
+                const gradeValue = String(g.grade).replace(',', '.'); // Sostituisci la virgola con il punto
+                const numericGrade = parseFloat(gradeValue);
+                
+                if (!isNaN(numericGrade)) {
+                    sum += numericGrade;
+                    count++;
+                } else {
+                    textGrades.push(g.grade);
+                }
+            });
+
+            if (count > 0) {
+                const average = sum / count;
+                // Formatta a 2 decimali solo se non è un intero
+                const display = (average % 1 === 0) ? average.toFixed(0) : average.toFixed(2);
+                return { display: display, numeric: average };
+            } else if (textGrades.length > 0) {
+                // Se ci sono solo voti testuali, ritorna il conteggio
+                return { display: `(${textGrades.length})`, numeric: NaN };
+            } else {
+                return { display: '--', numeric: NaN };
+            }
+        }
+
+
+        // --- GESTIONE CLASSE ---
+        function getClasseFromStorageOrUrl() {
+            let selectedClass = localStorage.getItem(CURRENT_CLASS_KEY) || '1A';
+            if (!studentData[selectedClass]) {
+                selectedClass = '1A';
+            }
+            classKey = selectedClass;
+            localStorage.setItem(CURRENT_CLASS_KEY, classKey);
+            document.getElementById('class-detail').textContent = classKey;
+            
+            // Aggiorna lo stato attivo nei link
+            document.querySelectorAll('.class-links a').forEach(link => {
+                link.classList.remove('active-class');
+                if (link.getAttribute('data-class') === classKey) {
+                    link.classList.add('active-class');
+                }
+            });
+        }
+        
+        // Listener per i link delle classi
+        document.querySelectorAll('.class-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                classKey = this.getAttribute('data-class');
+                localStorage.setItem(CURRENT_CLASS_KEY, classKey);
+                // Tenta di selezionare il primo studente della nuova classe
+                currentStudentId = studentData[classKey][0] ? studentData[classKey][0].id : null; 
+                currentSubject = null; // Resetta la materia
+                localStorage.setItem(CURRENT_STUDENT_ID_KEY, currentStudentId);
+                initValutazioni(); // Ricarica tutto per la nuova classe
+            });
+        });
+
+        // --- RENDER ALUNNI ---
+        function renderStudentList() {
+            const studentListContainer = document.getElementById('student-names-list');
+            studentListContainer.innerHTML = '';
+            
+            const students = studentData[classKey];
+            let studentHtml = '';
+
+            students.forEach(student => {
+                const isSelected = student.id === currentStudentId ? 'selected' : '';
+                studentHtml += `
+                    <div class="student-row-valutazioni ${isSelected}" data-student-id="${student.id}" onclick="selectStudent(${student.id}, '${student.name}')">
+                        <div class="student-name">${student.name}</div>
+                        <div style="font-size: 0.7em; color: #aaa;">(${student.date})</div>
+                    </div>
+                `;
+            });
+
+            studentListContainer.innerHTML = studentHtml;
+        }
+
+        function selectStudent(studentId, studentName) {
+            currentStudentId = studentId;
+            localStorage.setItem(CURRENT_STUDENT_ID_KEY, studentId);
+            document.getElementById('student-name-header').innerHTML = studentName;
+            
+            currentSubject = null; 
+            renderStudentList(); 
+            renderSubjectList();
+        }
+        
+        // --- RENDER MATERIE AGGIORNATO CON MEDIA ---
+
+        function renderSubjectList() {
+            const subjectListContainer = document.getElementById('subject-list');
+            const studentHeader = document.getElementById('student-name-header');
+            const evaluationsList = document.getElementById('evaluations-list');
+            const materiaBar = document.getElementById('materia-selezionata-container');
+
+            subjectListContainer.innerHTML = '';
+            evaluationsList.innerHTML = '';
+            materiaBar.innerHTML = '';
+            
+            if (currentStudentId === null) {
+                studentHeader.innerHTML = 'Seleziona un alunno per visualizzare le materie.';
+                return;
+            }
+
+            const studentName = studentData[classKey].find(s => s.id === currentStudentId).name;
+            studentHeader.innerHTML = `Materie di **${studentName}**`;
+            
+            // Assicurati che lo studente abbia un entry in evaluationData (se non caricata da storage)
+            const studentEvaluations = evaluationData[currentStudentId] || {};
+
+
+            allSubjects.forEach(fullSubjectName => {
+                let displaySubject = fullSubjectName;
+                let dataSubjectValue = fullSubjectName; 
+                let teacherInfo = '';
+                
+                // Estrazione del nome base e del docente
+                const startParen = fullSubjectName.indexOf('(');
+                const endParen = fullSubjectName.indexOf(')');
+
+                if (startParen > 0 && endParen > startParen) {
+                    teacherInfo = fullSubjectName.substring(startParen + 1, endParen);
+                    dataSubjectValue = fullSubjectName.substring(0, startParen).trim();
+                    displaySubject = dataSubjectValue;
+                }
+                
+                // Calcolo della media
+                const subjectGrades = studentEvaluations[dataSubjectValue] || [];
+                const average = calculateAverage(subjectGrades);
+                
+                // Colore della media (es. rosso se sotto 6)
+                let avgColor = average.numeric < 6 ? '#d8232a' : (average.numeric >= 7.5 ? '#008000' : '#2e2e2e');
+                if (isNaN(average.numeric) && average.display !== '--') avgColor = '#555'; // Voti testuali
+                if (average.display === '--') avgColor = '#999'; // Nessun voto
+
+                // HTML per la lista
+                const subjectHtml = `
+                    <div class="subject-item" data-subject="${dataSubjectValue}" onclick="renderEvaluationDetails('${dataSubjectValue}')">
+                        <div class="subject-info">
+                            <span>${displaySubject}</span>
+                            ${teacherInfo ? `<span style="font-size: 0.75em; color: #555; margin-top: 3px;">(${teacherInfo})</span>` : ''}
+                        </div>
+                        <div class="subject-media" style="color: white; background-color: ${avgColor};">${average.display}</div>
+                    </div>
+                `;
+                subjectListContainer.innerHTML += subjectHtml;
+            });
+        }
+        
+        function renderEvaluationDetails(subject) {
+            currentSubject = subject;
+
+            const studentHeader = document.getElementById('student-name-header');
+            const evaluationsList = document.getElementById('evaluations-list');
+            const subjectListContainer = document.getElementById('subject-list');
+            const materiaBar = document.getElementById('materia-selezionata-container');
+            
+            const studentName = studentData[classKey].find(s => s.id === currentStudentId).name;
+            studentHeader.innerHTML = studentName; 
+            subjectListContainer.innerHTML = ''; // Nasconde la lista delle materie
+
+            const studentEvaluations = evaluationData[currentStudentId] || {};
+            const subjectGrades = studentEvaluations[subject] || [];
+            const average = calculateAverage(subjectGrades);
+            
+            // Trova la stringa completa originale (con insegnanti) per il display della barra
+            const originalSubjectEntry = allSubjects.find(s => s.startsWith(subject + ' (') || s === subject) || subject;
+            let fullSubjectDisplay = originalSubjectEntry.toUpperCase();
+
+            // Aggiorna la barra della materia CON IL PULSANTE + e la MEDIA
+            materiaBar.innerHTML = `
+                <div class="materia-selezionata-bar">
+                    <div style="display: flex; align-items: center;">
+                        <span onclick="renderSubjectList()" style="cursor: pointer;">&lt; ${fullSubjectDisplay}</span>
+                        <span class="media-bar">${average.display}</span>
+                    </div>
+                    <button onclick="toggleGradeInput()" style="background: white; color: #d8232a; border: none; padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1.2em;">+</button>
+                </div>
+            `;
+            
+            // --- Area di Input Voto (Nascosta inizialmente) ---
+            let inputAreaHtml = `
+                <div id="grade-input-area" style="display: none; padding: 15px; border: 1px solid #d8232a; margin-bottom: 20px; border-radius: 4px; background-color: #ffeaea;">
+                    <h4 style="margin-top: 0;">Inserisci Nuovo Voto per ${subject}:</h4>
+                    <input type="date" id="input-date" value="${new Date().toISOString().slice(0, 10)}" style="padding: 5px; margin-right: 10px;">
+                    <input type="text" id="input-grade" placeholder="Voto (es. 7, 6.5, Ottimo)" style="padding: 5px; width: 150px; margin-right: 10px;">
+                    <select id="input-type" style="padding: 5px; margin-right: 10px;">
+                        <option value="Verifica">Verifica</option>
+                        <option value="Interrogazione">Interrogazione</option>
+                        <option value="Esercizi">Esercizi</option>
+                        <option value="Orale">Orale</option>
+                        <option value="Scritto">Scritto</option>
+                    </select>
+                    <input type="text" id="input-description" placeholder="Descrizione (es. Analisi logica)" style="padding: 5px; width: 250px; margin-right: 10px;">
+                    <button onclick="saveNewGrade('${subject}')" style="background-color: #d8232a; color: white; padding: 6px 15px; border: none; border-radius: 4px; cursor: pointer;">Salva</button>
+                    <button onclick="toggleGradeInput()" style="background-color: #ccc; color: #333; padding: 6px 15px; border: none; border-radius: 4px; cursor: pointer;">Annulla</button>
+                </div>
+            `;
+
+
+            let gradesHtml = inputAreaHtml; // Iniziamo l'HTML con l'area di input
+
+            if (subjectGrades.length === 0) {
+                gradesHtml += `<p style="padding: 20px; text-align: center; color: #888;">Nessuna valutazione registrata per ${subject}.</p>`;
+            } else {
+                gradesHtml += `
+                    <div class="grade-row" style="border-bottom: 2px solid #ddd; font-weight: bold;">
+                        <div class="grade-date">DATA</div>
+                        <div class="grade-value">VOTO</div>
+                        <div class="grade-type">TIPO</div>
+                        <div class="grade-description">DESCRIZIONE</div>
+                    </div>
+                `;
+                
+                // Ordiniamo i voti per data (dal più recente al meno recente)
+                subjectGrades.sort((a, b) => {
+                    // Converti le date 'DD/MM/YYYY' in oggetti Date
+                    const dateA = new Date(a.date.split('/')[2], a.date.split('/')[1] - 1, a.date.split('/')[0]);
+                    const dateB = new Date(b.date.split('/')[2], b.date.split('/')[1] - 1, b.date.split('/')[0]);
+                    return dateB - dateA; // Ordine decrescente
+                });
+
+                subjectGrades.forEach(grade => {
+                    gradesHtml += `
+                        <div class="grade-row">
+                            <div class="grade-date">${grade.date}</div>
+                            <div class="grade-value">${grade.grade}</div>
+                            <div class="grade-type">${grade.type}</div>
+                            <div class="grade-description">${grade.description}</div>
+                        </div>
+                    `;
+                });
+            }
+
+
+            evaluationsList.innerHTML = gradesHtml;
+        }
+
+
+        // --- FUNZIONI PER L'INSERIMENTO VOTO ---
+        
+        function toggleGradeInput() {
+            const inputArea = document.getElementById('grade-input-area');
+            if (inputArea) {
+                inputArea.style.display = inputArea.style.display === 'none' ? 'block' : 'none';
+                
+                if (inputArea.style.display === 'block') {
+                    document.getElementById('input-grade').value = '';
+                    document.getElementById('input-description').value = '';
+                    document.getElementById('input-date').value = new Date().toISOString().slice(0, 10); 
+                }
+            }
+        }
+
+        function saveNewGrade(subject) {
+            const dateInput = document.getElementById('input-date').value;
+            const grade = document.getElementById('input-grade').value.trim();
+            const type = document.getElementById('input-type').value;
+            const description = document.getElementById('input-description').value.trim();
+
+            if (!grade || !dateInput) {
+                alert('Inserisci un voto e una data validi.');
+                return;
+            }
+
+            // Formattiamo la data da YYYY-MM-DD a DD/MM/YYYY
+            const parts = dateInput.split('-');
+            const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            
+            const newGrade = {
+                date: formattedDate,
+                grade: grade,
+                type: type,
+                description: description || 'Nessuna descrizione' 
+            };
+            
+            // 1. Inizializza l'alunno se non ha voti
+            if (!evaluationData[currentStudentId]) {
+                evaluationData[currentStudentId] = {};
+            }
+            
+            // 2. Inizializza la materia per l'alunno se non esiste
+            if (!evaluationData[currentStudentId][subject]) {
+                evaluationData[currentStudentId][subject] = [];
+            }
+
+            // 3. Aggiungi il nuovo voto
+            evaluationData[currentStudentId][subject].push(newGrade);
+            
+            // CHIAMATA FONDAMENTALE: SALVA I DATI AGGIORNATI NEL LOCALSTORAGE
+            saveEvaluationData();
+            
+            // 4. Ricarica la visualizzazione per mostrare il nuovo voto
+            renderEvaluationDetails(subject);
+            
+            alert(`Voto '${grade}' salvato con successo per ${subject} e salvato localmente!`);
+        }
+        
+        // --- FUNZIONE DI INIZIALIZZAZIONE ---
+        function initValutazioni() {
+            // 1. Carica i voti salvati
+            loadEvaluationData();
+            
+            // 2. Carica la classe e lo studente selezionati
+            getClasseFromStorageOrUrl();
+            
+            // Assicurati che uno studente sia selezionato all'inizio 
+            if (currentStudentId === null) {
+                currentStudentId = studentData[classKey][0] ? studentData[classKey][0].id : null;
+                localStorage.setItem(CURRENT_STUDENT_ID_KEY, currentStudentId);
+            }
+            
+            renderStudentList(); 
+
+            if (currentStudentId) {
+                renderSubjectList(); 
+            } else {
+                document.getElementById('student-name-header').innerHTML = 'Nessun alunno disponibile in questa classe.';
+            }
+        }
+        
+        // Inizializza al caricamento
+        window.onload = initValutazioni;
+        
+        // Espone le funzioni al window per gli onclick
+        window.selectStudent = selectStudent;
+        window.renderEvaluationDetails = renderEvaluationDetails;
+        window.renderSubjectList = renderSubjectList;
+        window.toggleGradeInput = toggleGradeInput;
+        window.saveNewGrade = saveNewGrade;
+        window.loadEvaluationData = loadEvaluationData; // Esposta solo per chiarezza, non necessaria per onclick
+
+    </script>
+</body>
+</html>

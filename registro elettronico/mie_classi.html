@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClasseViva - Le mie classi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        /* --- Header Rosso --- */
+        .header {
+            background-color: #d8232a; /* Rosso ClasseViva */
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-right: 20px;
+            text-decoration: none; /* Rimuove sottolineatura dal link */
+            color: white;
+        }
+
+        .header-center {
+            font-size: 1.1em;
+            flex-grow: 1;
+            text-align: left;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            gap: 10px;
+            text-align: right;
+        }
+
+        .header-right a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+
+        .user-info {
+            line-height: 1.2;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .user-info #username-line {
+            display: block;
+            white-space: nowrap; 
+        }
+        .user-info #matricola-header {
+            display: block;
+            white-space: nowrap;
+            font-size: 1.1em;
+        }
+
+        .user-icon {
+            background-color: white;
+            color: #d8232a; 
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+        
+        /* --- Striscia Gialla (Ultimo Accesso) --- */
+        .last-access-bar {
+            background-color: #ffcc00; /* Giallo acceso */
+            color: white;
+            padding: 5px 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* --- Navigazione Menu Icone --- */
+        .menu-nav-container {
+            background-color: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .menu-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .search-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            font-size: 0.9em;
+        }
+        .search-area label {
+            font-weight: bold;
+        }
+        .search-area input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 120px;
+        }
+        .search-area button {
+            padding: 5px 15px;
+            border: 1px solid #ccc;
+            background-color: #eee;
+            cursor: pointer;
+        }
+
+        .icons-nav {
+            display: flex;
+            gap: 15px;
+            margin-left: auto; /* Sposta il blocco icone a destra */
+            align-items: flex-start;
+        }
+        .icon-item {
+            text-align: center;
+            font-size: 0.75em;
+            color: #555;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            min-width: 60px;
+        }
+        .icon-item:hover {
+            color: #d8232a;
+        }
+        .icon-item > div {
+            font-size: 2.2em; /* Dimensione dell'icona (simulata con testo/emoji) */
+            margin-bottom: 3px;
+            line-height: 1;
+        }
+        .icon-active {
+            font-weight: bold;
+            color: #d8232a;
+        }
+        .icon-active > div {
+            border-bottom: 3px solid #d8232a; /* L'icona attiva ha la sottolineatura rossa */
+            padding-bottom: 2px;
+        }
+
+        /* --- Contenuto Principale --- */
+        .content {
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .main-heading {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: normal;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #e8e8e8; /* Sfondo grigio chiaro */
+            border-radius: 4px;
+        }
+        .main-heading strong {
+            color: #d8232a;
+            font-weight: bold;
+        }
+
+        /* --- Struttura Classe --- */
+        .class-structure {
+            background-color: white;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 4px;
+        }
+
+        .class-row {
+            display: flex;
+            align-items: flex-start;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .class-row:last-child {
+            border-bottom: none;
+        }
+
+        .class-label {
+            font-size: 2em;
+            font-weight: bold;
+            color: #d8232a;
+            width: 80px;
+            flex-shrink: 0;
+            line-height: 1;
+            padding-top: 5px;
+            text-decoration: none; /* Rende il blocco cliccabile senza sottolineatura */
+        }
+        
+        .class-details {
+            flex-grow: 1;
+            /* Per compensare la rimozione della colonna destra, facciamo crescere di più questa */
+            padding-right: 20px; 
+        }
+        .class-details > div {
+            margin-bottom: 5px;
+        }
+        
+        .class-details strong {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            font-size: 1em;
+            line-height: 1.2;
+        }
+        .class-details .subject {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #4a148c; /* Viola per la materia */
+            border-bottom: 2px solid #4a148c;
+            display: inline-block;
+            padding-bottom: 2px;
+            margin-bottom: 5px;
+        }
+
+        .class-details .sub-links {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .class-details .sub-links a {
+            text-decoration: none;
+            color: #555;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .class-details .sub-links a:hover {
+            color: #d8232a;
+        }
+        .class-details .sub-links a > div {
+            font-size: 1.8em;
+            margin-bottom: 2px;
+        }
+
+        /* Icone simulate per la navigazione principale */
+        .i-orario::before { content: '⏱️'; }
+        .i-lezioni::before { content: '✅'; }
+        .i-comprense::before { content: '✖️'; }
+        .i-supplenze::before { content: '📝'; }
+        .i-miei::before { content: '👤'; }
+        .i-tutti::before { content: '👥'; }
+        .i-tutte::before { content: '🏢'; }
+        .i-mie::before { content: '🍎'; }
+        
+        /* Simboli per i link rapidi sotto la classe */
+        .s-registro::before { content: '📖'; }
+        .s-agenda::before { content: '📅'; }
+        .s-annotazioni::before { content: '💬'; }
+        .s-lezioni::before { content: '📚'; }
+        .s-assenze::before { content: '🚫'; }
+        .s-valutazioni::before { content: '💯'; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="dashboard.html" class="header-title">CLASSEVIVA</a>
+        <span class="header-center">Le mie classi</span>
+        <div class="header-right">
+            <span style="font-size: 1.5em; opacity: 0.7;">?</span>
+            <span id="matricola-header">CODICE...</span>
+            <a href="index.html" id="exit-link">Esci</a>
+            <div class="user-info">
+                <span id="username-line">NOME UTENTE</span>
+            </div>
+            <div class="user-icon">👤</div>
+        </div>
+    </div>
+    
+    <div class="last-access-bar">
+        ultimo accesso: 10-10 ora 11:46
+    </div>
+
+    <div class="menu-nav-container">
+        <div class="menu-nav">
+            <div class="search-area">
+                <label for="class-search">classi</label>
+                <input type="text" id="class-search" placeholder="Cerca...">
+                <button>Cerca</button>
+            </div>
+            
+            <div class="icons-nav">
+                <a href="#" class="icon-item"><div class="i-orario"></div>Orario</a>
+                <a href="#" class="icon-item"><div class="i-lezioni"></div>Lezioni</a>
+                <a href="#" class="icon-item"><div class="i-comprense"></div>Comprense</a>
+                <a href="#" class="icon-item"><div class="i-supplenze"></div>Supplenze</a>
+                <a href="#" class="icon-item"><div class="i-miei"></div>I miei studenti</a>
+                <a href="#" class="icon-item"><div class="i-tutti"></div>Tutti i gruppi</a>
+                <a href="#" class="icon-item"><div class="i-tutte"></div>Tutte le classi</a>
+                <a href="#" class="icon-item icon-active"><div class="i-mie"></div>Le mie classi</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="main-heading">
+            Classi e materie del docente <strong id="teacher-name">NOME DOCENTE</strong>
+        </div>
+
+        <div class="class-structure">
+            
+            <div class="class-row">
+                <a href="registro_classe.html?classe=1A" class="class-label">1A</a>
+                <div class="class-details">
+                    <div>
+                        <strong>Registro di classe</strong>
+                        <p>Liceo Scienze Umane - Plesso: PLS001</p>
+                    </div>
+                    <div class="subject">STORIA DELL'ARTE</div>
+                    <div class="sub-links">
+                        <a href="registro_classe.html?classe=1A"> <div class="s-registro"></div> Registro</a>
+                        <a href="#"> <div class="s-agenda"></div> Agenda</a>
+                        <a href="#"> <div class="s-annotazioni"></div> Annotazioni</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="class-row">
+                <a href="registro_classe.html?classe=2A" class="class-label">2A</a>
+                <div class="class-details">
+                    <div>
+                        <strong>Registro di classe</strong>
+                        <p>Istituto Tecnico - Plesso: PLS002</p>
+                    </div>
+                    <div class="subject">TECNOLOGIE INFORMATICHE</div>
+                    <div class="sub-links">
+                        <a href="registro_classe.html?classe=2A"> <div class="s-registro"></div> Registro</a>
+                        <a href="#"> <div class="s-agenda"></div> Agenda</a>
+                        <a href="#"> <div class="s-annotazioni"></div> Annotazioni</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="class-row">
+                <a href="registro_classe.html?classe=3A" class="class-label">3A</a>
+                <div class="class-details">
+                    <div>
+                        <strong>Registro di classe</strong>
+                        <p>Liceo Scientifico - Plesso: PLS003</p>
+                    </div>
+                    <div class="subject">SCIENZE E MATEMATICA</div>
+                    <div class="sub-links">
+                        <a href="registro_classe.html?classe=3A"> <div class="s-registro"></div> Registro</a>
+                        <a href="#"> <div class="s-agenda"></div> Agenda</a>
+                        <a href="#"> <div class="s-annotazioni"></div> Annotazioni</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="class-row">
+                <a href="registro_classe.html?classe=4A" class="class-label">4A</a>
+                <div class="class-details">
+                    <div>
+                        <strong>Registro di classe</strong>
+                        <p>Istituto Professionale - Plesso: PLS004</p>
+                    </div>
+                    <div class="subject">GESTIONE AZIENDALE</div>
+                    <div class="sub-links">
+                        <a href="registro_classe.html?classe=4A"> <div class="s-registro"></div> Registro</a>
+                        <a href="#"> <div class="s-agenda"></div> Agenda</a>
+                        <a href="#"> <div class="s-annotazioni"></div> Annotazioni</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="class-row">
+                <a href="registro_classe.html?classe=5A" class="class-label">5A</a>
+                <div class="class-details">
+                    <div>
+                        <strong>Registro di classe</strong>
+                        <p>Liceo Linguistico - Plesso: PLS005</p>
+                    </div>
+                    <div class="subject">LINGUA INGLESE</div>
+                    <div class="sub-links">
+                        <a href="registro_classe.html?classe=5A"> <div class="s-registro"></div> Registro</a>
+                        <a href="#"> <div class="s-agenda"></div> Agenda</a>
+                        <a href="#"> <div class="s-annotazioni"></div> Annotazioni</a>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const usernameLine = document.getElementById('username-line');
+            const matricolaHeader = document.getElementById('matricola-header');
+            const teacherName = document.getElementById('teacher-name');
+            const exitLink = document.getElementById('exit-link');
+
+            // 1. Recupera il nome utente salvato
+            let loggedUsername = localStorage.getItem('loggedUsername');
+
+            if (loggedUsername) {
+                // Estrazione e formattazione del Nome (parte iniziale, tutto maiuscolo)
+                const lastDotIndex = loggedUsername.lastIndexOf('.');
+                let cleanName = loggedUsername.substring(0, lastDotIndex !== -1 ? lastDotIndex : loggedUsername.length); 
+
+                let parts = cleanName.split('.');
+                let displayName = parts.map(part => part.toUpperCase()).join(' ');
+
+                // Estrazione del Codice Personale (il numero dopo SC)
+                let matricolaMatch = loggedUsername.match(/SC(\d+)$/i); 
+                let matricolaDisplay = matricolaMatch ? matricolaMatch[1] : 'CODICE NON DISPONIBILE';
+                
+                // Popola gli elementi dell'header
+                usernameLine.textContent = displayName;
+                teacherName.textContent = displayName;
+                matricolaHeader.textContent = matricolaDisplay;
+
+            } else {
+                // Se non c'è il nome utente, reindirizza al login
+                window.location.href = 'index.html'; 
+                return;
+            }
+
+            // 2. Gestione del pulsante ESCI
+            exitLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Cancella la sessione di login
+                localStorage.removeItem('loggedUsername');
+                // Reindirizza alla pagina di login
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Login ClasseViva - Spaggiari</title>
+    <style>
+        /* --- STILI CSS BASE --- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #d8232a; /* Rosso ClasseViva */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #d8232a;
+            color: white;
+            font-size: 14px;
+        }
+        
+        /* Simula il logo Spaggiari */
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .logo-icon {
+            font-size: 24px;
+            margin-right: 5px;
+            color: white;
+        }
+        .logo-text {
+             line-height: 1.2;
+        }
+        .logo-text strong {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .logo-text span {
+            font-size: 10px;
+            opacity: 0.9;
+        }
+
+        .login-box {
+            background-color: white;
+            padding: 30px 40px;
+            margin-top: 50px;
+            width: 90%;
+            max-width: 900px; 
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- SEZIONE CRENDENZIALI (LAYOUT ORIZZONTALE) --- */
+        .credentials-form {
+            display: flex;
+            align-items: flex-end; 
+            flex-wrap: nowrap;
+            gap: 15px; 
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group {
+            flex-grow: 1; 
+            min-width: 180px; 
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 3px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            height: 40px;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        .input-with-icon input {
+            padding-right: 35px;
+        }
+        .input-with-icon .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #555;
+            font-size: 1.2em;
+            line-height: 1;
+        }
+        
+        /* CONTENITORE PER LINK E BOTTONE */
+        .action-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0; 
+            justify-content: flex-end;
+            height: 70px; /* Assicura allineamento con gli input */
+            min-width: 160px; 
+        }
+
+        .forgot-password-link {
+            font-size: 0.85em;
+            text-align: right;
+            line-height: 1; 
+            align-self: flex-end; 
+            margin-bottom: 10px; /* Spazio per allinearsi alla label Password */
+            margin-right: 0; 
+            min-width: auto;
+        }
+        .forgot-password-link a {
+            color: #d8232a;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .login-button {
+            background-color: #1aae6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            height: 40px; 
+            white-space: nowrap; 
+            align-self: flex-end;
+        }
+
+        .warning {
+            color: #d8232a;
+            font-size: 0.85em;
+            margin-top: 10px;
+            width: 100%; 
+            clear: both;
+            order: 10; 
+        }
+
+        .separator {
+            text-align: center;
+            border-bottom: 1px solid #ccc;
+            line-height: 0.1em;
+            margin: 30px 0;
+            color: #777;
+        }
+        .separator span {
+            background: #fff;
+            padding: 0 10px;
+        }
+
+        /* --- Sezione SPID/CIE (invariata) --- */
+        .spid-cie-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .spid-info {
+            width: 55%;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .spid-info > p {
+            margin: 5px 0;
+        }
+        .spid-buttons {
+            width: 40%;
+        }
+
+        .spid-buttons > div {
+            display: flex;
+            justify-content: flex-end; 
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .spid-buttons a {
+            color: #d8232a;
+            font-size: 0.85em;
+            margin-right: 15px;
+            text-decoration: none;
+            white-space: nowrap; 
+        }
+        
+        .spid-button, .cie-button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 180px; 
+            text-align: center;
+        }
+        .spid-button {
+            background-color: #007ac3;
+            color: white;
+        }
+        .cie-button {
+            background-color: #444;
+            color: white;
+        }
+
+        .class-viva-link {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .class-viva-logo-container {
+            text-align: center;
+            color: white;
+            margin-top: auto; 
+            padding-bottom: 80px; 
+        }
+        .class-viva-logo {
+            font-size: 5em;
+            font-weight: bold;
+            color: white;
+            margin: 10px 0 0;
+            line-height: 1;
+        }
+        
+        .class-viva-slogan {
+            font-style: italic;
+            font-size: 1.5em;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        /* --- BANNER COOKIE FISSO (invariato) --- */
+        .cookie-banner {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8em;
+            line-height: 1.3;
+        }
+
+        .cookie-text {
+            width: 50%;
+            max-width: 600px;
+            margin-right: 20px;
+        }
+
+        .cookie-buttons button {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 8px 15px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .cookie-buttons .accept {
+            background-color: white;
+            color: black;
+        }
+        
+        /* Icone simulate con emoji */
+        .icon-eye::before { content: '👁️'; }
+        .icon-lock::before { content: '🔒'; }
+        .icon-spid::before { content: '👤'; margin-right: 5px; }
+        .icon-cie::before { content: '💳'; margin-right: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo-container">
+            <span class="logo-icon">🞨</span> 
+            <div class="logo-text">
+                 <strong>GRUPPO SPAGGIARI PARMA</strong><br>
+                 <span>Un futuro ricco di esperienza</span>
+            </div>
+        </div>
+        <div>Italia - IT ▼</div>
+    </div>
+
+    <div class="login-box">
+        
+        <form class="credentials-form">
+            
+            <div class="input-group">
+                <label>Codice Personale / Email</label>
+                <input type="text" id="email" placeholder="Codice Personale / Email">
+            </div>
+            
+            <div class="input-group">
+                <label>Password</label>
+                <div class="input-with-icon">
+                    <input type="password" id="password" placeholder="Password">
+                    <span class="toggle-password icon-eye"></span>
+                </div>
+            </div>
+            
+            <div class="action-group">
+                <div class="forgot-password-link">
+                    <a href="#">Password dimenticata?</a>
+                </div>
+                
+                <button type="submit" class="login-button">Entra con le credenziali</button>
+            </div>
+            <div class="warning">
+                Attenzione! Dopo 5 tentativi di login con credenziali errate l'accesso sarà sospeso per 60 minuti.
+            </div>
+
+        </form>
+
+        <div class="separator"><span>In alternativa</span></div>
+
+        <div class="spid-cie-section">
+            <div class="spid-info">
+                <p>Solo per le scuole statali: si potrà accedere tramite **SPID** e **CIE**.</p>
+                <p>&gt; Il servizio è offerto dal Ministero dell'Istruzione.</p>
+            </div>
+            <div class="spid-buttons">
+                <div>
+                    <a href="#">Maggiori informazioni su SPID</a>
+                    <a href="#">Non hai SPID?</a>
+                    <button class="spid-button icon-spid">Entra con SPID</button>
+                </div>
+                <div>
+                    <a href="#">Maggiori informazioni sulla CIE</a>
+                    <a href="#">Non hai la CIE?</a>
+                    <button class="cie-button icon-cie">Entra con CIE</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="class-viva-link">
+            Sei un genitore? Scopriamo insieme le funzionalità di Classeviva: clicca qui.
+        </div>
+    </div>
+    
+    <div class="class-viva-logo-container">
+        <div class="class-viva-logo">CLASSEVIVA</div>
+        <div class="class-viva-slogan">Il cuore pulsante</div>
+    </div>
+    
+    <div class="cookie-banner">
+        <div class="cookie-text">
+            Questo sito e gli strumenti terzi da questo utilizzati si avvalgono di cookie necessari al funzionamento ed utili alle finalità illustrate nella COOKIE POLICY.
+        </div>
+        <div class="cookie-buttons">
+            <button>RIFIUTA</button>
+            <button>PERSONALIZZA</button>
+            <button class="accept">ACCETTA TUTTI</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Ottieni il riferimento agli elementi
+        const form = document.querySelector('.credentials-form');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const warningDiv = form.querySelector('.warning');
+        const togglePassword = form.querySelector('.toggle-password');
+        
+        // 2. Credenziali di prova AGGIORNATE per SC27309 (solo in MAIUSCOLO)
+        const VALID_USERNAMES = [
+            "pikky.pomodoro.SC27309", 
+            "pippy.ananas.SC27309", 
+            "spinaci.verdi.SC27309", 
+            "alessia.dematteis.SC27309", 
+            "enrico.dematteis.SC27309", 
+            "ferdinandofrancesco.ferrari.SC27309", 
+            "insalata.russa.SC27309"
+        ];
+        const COMMON_PASSWORD = "cfp.2025";
+        const INITIAL_WARNING = 'Attenzione! Dopo 5 tentativi di login con credenziali errate l\'accesso sarà sospeso per 60 minuti.';
+
+        // 3. Funzione per mostrare/nascondere la password (invariata)
+        if (togglePassword) {
+            togglePassword.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                togglePassword.classList.toggle('icon-eye');
+                togglePassword.classList.toggle('icon-lock');
+            });
+        }
+
+        // 4. Gestione dell'invio del modulo AGGIORNATA
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            const username = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            // Resetta lo stato
+            warningDiv.style.color = '#d8232a';
+            warningDiv.textContent = INITIAL_WARNING;
+            emailInput.style.border = '1px solid #ccc';
+            passwordInput.style.border = '1px solid #ccc';
+
+            if (username === '' || password === '') {
+                warningDiv.textContent = 'Inserisci il Codice Personale/Email e la Password.';
+                warningDiv.style.color = 'red';
+                emailInput.style.border = username === '' ? '2px solid red' : '1px solid #ccc';
+                passwordInput.style.border = password === '' ? '2px solid red' : '1px solid #ccc';
+                return;
+            }
+
+            // --- Logica di verifica per il MAIUSCOLO SC27309 ---
+            
+            const lastDotIndex = username.lastIndexOf('.');
+            let usernameToCheck;
+            
+            if (lastDotIndex !== -1) {
+                // Converte solo la parte iniziale a minuscolo
+                const prefix = username.substring(0, lastDotIndex).toLowerCase();
+                // La parte finale (il codice SC27309) è usata ESATTAMENTE come inserita
+                const suffix = username.substring(lastDotIndex); 
+                usernameToCheck = prefix + suffix;
+            } else {
+                // Se manca il punto, assume che debba essere tutto minuscolo (comportamento di fallback)
+                usernameToCheck = username.toLowerCase(); 
+            }
+            
+            // Verifichiamo che il nome utente COMBACI esattamente con uno nella lista MAIUSCOLA
+            const isUsernameValid = VALID_USERNAMES.includes(usernameToCheck);
+            const isPasswordValid = password === COMMON_PASSWORD;
+
+            if (isUsernameValid && isPasswordValid) {
+                // Login Riuscito
+                localStorage.setItem('loggedUsername', username); 
+                window.location.href = 'dashboard.html'; 
+                
+            } else {
+                // Credenziali Errate
+                warningDiv.textContent = 'Credenziali errate. Riprova. (Ricorda: il codice finale deve essere SC27309 in MAIUSCOLO)';
+                warningDiv.style.color = 'red';
+                emailInput.style.border = '2px solid red';
+                passwordInput.style.border = '2px solid red';
+            }
+        });
+
+    </script>
+</body>
+</html>
