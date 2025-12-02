@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClasseViva - Registro di Classe Funzionante</title>
+    <style>
+        /* Stili CSS */
+        
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f7f7f7; color: #333; }
+        .header { background-color: #d8232a; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header-title { font-size: 1.5em; font-weight: bold; margin-right: 20px; text-decoration: none; color: white; }
+        .last-access-bar { background-color: #ffcc00; color: white; padding: 5px 20px; font-size: 0.85em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        .menu-nav-container { background-color: white; padding: 10px 20px; border-bottom: 1px solid #ddd; }
+        .menu-nav { display: flex; justify-content: center; gap: 15px; max-width: 1200px; margin: 0 auto; }
+        .icon-item { text-align: center; font-size: 0.75em; color: #555; cursor: pointer; text-decoration: none; display: block; min-width: 60px; }
+        .icon-active { font-weight: bold; color: #d8232a; }
+        .icon-active > div { border-bottom: 3px solid #d8232a; padding-bottom: 2px; }
+        .content { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .main-info { text-align: center; font-size: 1.3em; font-weight: normal; margin: 20px 0; padding: 10px; background-color: #e8e8e8; border-radius: 4px; }
+        .main-info strong { color: #d8232a; font-weight: bold; }
+        .filter-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; font-size: 0.9em; }
+        .table-container { display: flex; background-color: white; border: 1px solid #ddd; position: relative; }
+        .student-list { width: 350px; flex-shrink: 0; border-right: 1px solid #eee; }
+        .lessons-area { flex-grow: 1; overflow-x: auto; }
+        .student-header { padding: 10px; font-weight: bold; font-size: 0.9em; border-bottom: 1px solid #ccc; background-color: #f0f0f0; }
+        .grid-header { display: flex; border-bottom: 1px solid #ccc; background-color: #f0f0f0; }
+        .lessons-header-content { display: flex; min-width: 500px; flex-grow: 1; }
+        .lesson-header-cell { flex-basis: 14.28%; max-width: 100px; min-width: 70px; text-align: center; padding: 5px 0; font-size: 0.8em; border-left: 1px solid #ddd; }
+        .student-row { display: flex; align-items: center; border-bottom: 1px solid #eee; }
+        .student-index { width: 30px; text-align: center; font-size: 0.7em; color: #777; padding: 8px 0; }
+        .student-name-cell { flex-grow: 1; font-weight: bold; font-size: 0.9em; padding: 8px 0; position: relative; }
+        .student-birthdate { font-size: 0.7em; font-weight: normal; display: block; color: #777; }
+        .dots-button { background: none; border: none; font-size: 1.5em; cursor: pointer; color: #aaa; padding: 0 5px; line-height: 1; vertical-align: middle; margin-left: 5px; }
+        .context-menu { position: absolute; top: 100%; left: 100%; background: white; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1000; min-width: 150px; display: none; }
+        .context-menu a { display: block; padding: 8px 12px; text-decoration: none; color: #333; font-size: 0.9em; }
+        .context-menu a:hover { background-color: #f0f0f0; }
+        .context-menu a.action-presente { color: white; background-color: #28a745; font-weight: bold;}
+        .context-menu a.action-assente { color: white; background-color: #d8232a; font-weight: bold;}
+        .context-menu a.action-ritardo { color: #333; background-color: #ffcc00; font-weight: bold;}
+        .context-menu a.action-cancella { color: #888; background-color: #eee; }
+        .attendance-row { display: flex; min-width: 500px; flex-grow: 1; }
+        .lesson-action-cell { flex-basis: 14.28%; max-width: 100px; min-width: 70px; text-align: center; padding: 8px 0; font-size: 0.9em; border-left: 1px solid #eee; color: #aaa; font-weight: normal; cursor: pointer; background-color: white; border-right: 1px solid #eee; text-transform: uppercase; }
+        .lesson-action-cell:not([style]):hover { background-color: #ffeaea; color: #d8232a; font-weight: bold; }
+        .lessons-area .lesson-action-cell.active { background-color: #f5f5f5 !important; border: 1px dashed #d8232a !important; color: #333 !important; font-weight: bold; }
+
+        /* Stili Calendario */
+        .calendar-container { flex-basis: 300px; font-size: 0.9em; border: 1px solid #ddd; padding: 10px; background-color: white; border-radius: 4px; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; }
+        .calendar-header a { text-decoration: none; color: #d8232a; font-size: 1.2em; padding: 0 5px; }
+        #calendar-month-year { color: #333; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+        .calendar-day-name { font-weight: bold; color: #d8232a; padding: 5px 0; font-size: 0.8em; }
+        .calendar-day-number { padding: 5px; cursor: pointer; border-radius: 50%; width: 20px; height: 20px; line-height: 20px; margin: 2px auto; box-sizing: content-box; }
+        .calendar-day-number:hover { background-color: #f0f0f0; }
+        .calendar-day-active { font-weight: bold; background-color: #d8232a !important; color: white !important; border-radius: 50%; }
+        .calendar-day-empty { cursor: default !important; background-color: transparent !important; }
+
+        /* Stili per la barra delle classi */
+        .class-links a { margin-right: 10px; text-decoration: none; color: #007bff; font-weight: normal; }
+        .class-links a.active-class { color: #d8232a; font-weight: bold; border-bottom: 2px solid #d8232a; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="dashboard.html" class="header-title">CLASSEVIVA</a>
+        <span class="header-center">Registro di classe</span>
+        <div class="user-icon">👤</div>
+    </div>
+    
+    <div class="last-access-bar">
+        Ultimo accesso: 02-12 ora 16:51 (Simulazione)
+    </div>
+
+    <div class="menu-nav-container">
+        <div class="menu-nav">
+            <a href="#" class="icon-item"><div class="i-appello"></div>Appello</a>
+            <a href="#" class="icon-item"><div class="i-comunicazioni"></div>Comunicazioni</a>
+            <a href="#" class="icon-item"><div class="i-agenda"></div>Agenda di oggi</a>
+            <a href="#" class="icon-item"><div class="i-firma"></div>Firma</a>
+            <a href="#" class="icon-item"><div class="i-comprensenza"></div>Comprensenza</a>
+            <a href="#" class="icon-item"><div class="i-assenze"></div>Assenze</a>
+            <a href="valutazioni.html" class="icon-item"><div class="i-valutazioni"></div>Valutazioni</a>
+            <a href="#" class="icon-item"><div class="i-agenda-prof"></div>Agenda</a>
+            <a href="#" class="icon-item"><div class="i-didattica"></div>Didattica</a>
+            <a href="#" class="icon-item" id="classi-link"><div class="i-classi"></div>Le mie classi</a>
+            <a href="#" class="icon-item"><div class="i-tutti"></div>Tutti i gruppi</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="main-info">
+            Registro di classe di <strong id="class-detail"></strong> del giorno <strong id="day-detail"></strong>
+        </div>
+        
+        <div class="class-links" style="text-align: center; margin-bottom: 15px;">
+            <a href="#" data-class="1A">1A</a>
+            <a href="#" data-class="2A">2A</a>
+            <a href="#" data-class="3A">3A</a>
+            <a href="#" data-class="4A">4A</a>
+            <a href="#" data-class="5A">5A</a>
+        </div>
+
+        <div class="filter-row">
+            <div class="filter-links">
+                <span style="font-weight: bold;">filtra </span>
+                <a href="#">B</a> <a href="#">C</a> <a href="#">D</a> <a href="#">G</a> <a href="#">M</a> 
+                <a href="#">P</a> <a href="#">R</a> <a href="#">S</a> <a href="#">T</a> <a href="#">V</a> 
+                <a href="#">Tutti</a>
+                
+                <span style="margin-left: 20px;">Seleziona: <a href="#">tutti</a> <a href="#">nessuno</a> <a href="#">sottogruppo</a></span>
+                
+                <div style="margin-top: 15px;">
+                    <span style="opacity: 0.7;">lezione </span>
+                    <span id="current-date"></span>
+                </div>
+            </div>
+            
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <div style="display: flex; align-items: center;">
+                        <a href="#" id="prev-year-link" onclick="changeYear(-1); return false;" style="font-size: 0.9em;">&lt;&lt;</a>
+                        <a href="#" id="prev-month-link" onclick="changeMonth(-1); return false;">&lt;</a>
+                    </div>
+                    
+                    <span id="calendar-month-year"></span>                     
+                    
+                    <div style="display: flex; align-items: center;">
+                        <a href="#" id="next-month-link" onclick="changeMonth(1); return false;">&gt;</a>
+                        <a href="#" id="next-year-link" onclick="changeYear(1); return false;" style="font-size: 0.9em;">&gt;&gt;</a>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="student-list">
+                <div class="student-header">
+                    Alunni
+                </div>
+                <div id="student-names">
+                    </div>
+            </div>
+
+            <div class="lessons-area">
+                <div class="grid-header">
+                    <div style="width: 100px; text-align: center; font-size: 0.8em; padding: 5px 0; border-right: 1px solid #ccc;">
+                        Giornale del professore
+                    </div>
+                    <div class="lessons-header-content">
+                        <div class="lesson-header-cell">1 ora</div>
+                        <div class="lesson-header-cell">2 ora</div>
+                        <div class="lesson-header-cell">3 ora</div>
+                        <div class="lesson-header-cell">4 ora</div>
+                        <div class="lesson-header-cell">5 ora</div>
+                        <div class="lesson-header-cell">6 ora</div>
+                        <div class="lesson-header-cell">7 ora</div>
+                    </div>
+                </div>
+
+                <div class="grid-header" style="background-color: white; border-bottom: 2px solid #ccc; font-weight: normal;">
+                    <div style="width: 100px; text-align: center; font-size: 0.8em; padding: 5px 0; border-right: 1px solid #ccc;">
+                        Lezioni
+                    </div>
+                    <div class="lessons-header-content">
+                        <div class="lesson-action-cell active">Lezione</div>
+                        <div class="lesson-action-cell">Lezione</div>
+                        <div class="lesson-action-cell">Lezione</div>
+                        <div class="lesson-action-cell">Lezione</div>
+                        <div class="lesson-action-cell">Lezione</div>
+                        <div class="lesson-action-cell">Lezione</div>
+                        <div class="lesson-action-cell">Lezione</div>
+                    </div>
+                </div>
+
+                <div id="attendance-body">
+                    </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div id="context-menu" class="context-menu">
+        <a href="#" class="action-presente" data-action="P">Presente (PL)</a>
+        <a href="#" class="action-assente" data-action="A">Assente (AL)</a>
+        <a href="#" class="action-ritardo" data-action="R">Ritardo (R)</a>
+        <a href="#" data-action="N">Nota</a>
+        <a href="#" data-action="V">Voto</a>
+        <a href="#" data-action="US">Uscita Anticipata (US)</a> 
+        <a href="#" class="action-cancella" data-action="C">Cancella</a> 
+    </div>
+
+    <script>
+        // --- CHIAVI PER IL SALVATAGGIO LOCALE (LOCALSTORAGE) ---
+        const ATTENDANCE_KEY_PREFIX = 'cv_attendance_';
+        const CURRENT_DATE_KEY_PREFIX = 'cv_date_';
+        const CURRENT_CLASS_KEY = 'cv_current_class'; 
+
+        // Dati degli alunni (Classe 1A-5A)
+        const studentData = {
+            '1A': [
+                { id: 1, name: 'STELLINA DEMATTEIS', date: '01-01-2007' },
+                { id: 2, name: 'PANDINO DEMATTEIS', date: '02-01-2007' },
+                { id: 3, name: 'TARTARUGA BENUA', date: '03-01-2007' },
+                { id: 4, name: 'YUCKY BENUA', date: '04-01-2007' },
+                { id: 5, name: 'LOLLO BENUA', date: '05-01-2007' },
+                { id: 6, name: 'BRICIOLA DEMATTEIS', date: '06-01-2007' },
+                { id: 7, name: 'FLUFFY DEMATTEIS', date: '07-01-2007' },
+                { id: 8, name: 'TINA DEMATTEIS', date: '08-01-2007' },
+                { id: 9, name: 'GRIGETTA BENUA', date: '09-01-2007' },
+                { id: 10, name: 'LUNA DEMATTEIS', date: '10-01-2007' },
+                { id: 11, name: 'LUNA BENUA', date: '11-01-2007' },
+                { id: 12, name: 'KENDY DEMATTEIS', date: '12-01-2007' },
+                { id: 13, name: 'PAPERO DEMATTEIS', date: '13-01-2007' },
+                { id: 14, name: 'ATTIGLIO DEMATTEIS', date: '14-01-2007' },
+                { id: 15, name: 'SUNNY BENUA', date: '15-01-2007' },
+                { id: 16, name: 'CURT DEMATTEIS', date: '16-01-2007' },
+                { id: 17, name: 'BUNNY BENUA', date: '17-01-2007' }
+            ],
+            '2A': [
+                { id: 18, name: 'CANE DEMATTEIS', date: '01-02-2006' },
+                { id: 19, name: 'CANE BENUA', date: '02-02-2006' },
+                { id: 20, name: 'MICIAN DEMATTEIS', date: '03-02-2006' },
+                { id: 21, name: 'CICCIOBELLO TEMPERINI', date: '04-02-2006' },
+                { id: 22, name: 'MAICOL CAROTINI', date: '05-02-2006' },
+                { id: 23, name: 'CATTIVO TEMPERINI', date: '06-02-2006' },
+                { id: 24, name: 'BAMBOLA CAROTINI', date: '07-02-2006' },
+                { id: 25, name: 'ROBOTTINA ROSSETTI', date: '08-02-2006' }
+            ],
+            '3A': [
+                { id: 26, name: 'ALPHA SCARLETTI', date: '01-03-2005' },
+                { id: 27, name: 'BRAVO BIANCHI', date: '02-03-2005' },
+                { id: 28, name: 'CHARLIE NERI', date: '03-03-2005' },
+                { id: 29, name: 'DELTA ROSSI', date: '04-03-2005' },
+                { id: 30, name: 'ECHO VERDI', date: '05-03-2005' },
+                { id: 31, name: 'FOXTROT GIALLI', date: '06-03-2005' }
+            ],
+            '4A': [
+                { id: 32, name: 'GOLF GRIGI', date: '01-04-2004' },
+                { id: 33, name: 'HOTEL VIOLA', date: '02-04-2004' },
+                { id: 34, name: 'INDIA BLU', date: '03-04-2004' },
+                { id: 35, name: 'JULIET MARRONI', date: '04-04-2004' },
+                { id: 36, name: 'KILO ARANCIO', date: '05-04-2004' }
+            ],
+            '5A': [
+                { id: 37, name: 'LIMA ROSA', date: '01-05-2003' },
+                { id: 38, name: 'MIKE AZZURRO', date: '02-05-2003' },
+                { id: 39, name: 'NOVEMBER BEIGE', date: '03-05-2003' },
+                { id: 40, name: 'OSCAR CREMA', date: '04-05-2003' }
+            ]
+        };
+        
+        // Variabili globali
+        let attendanceStatus = {}; 
+        let currentDate; 
+        let classKey = '1A'; 
+
+        // --- GESTIONE CLASSE ---
+        function getClasseFromStorageOrUrl() {
+            const classFromStorage = localStorage.getItem(CURRENT_CLASS_KEY);
+            let selectedClass = classFromStorage || '1A';
+
+            if (!studentData[selectedClass]) {
+                selectedClass = '1A';
+            }
+
+            classKey = selectedClass;
+            localStorage.setItem(CURRENT_CLASS_KEY, classKey);
+            document.getElementById('class-detail').textContent = classKey;
+            
+            // Aggiorna lo stato attivo nei link
+            document.querySelectorAll('.class-links a').forEach(link => {
+                link.classList.remove('active-class');
+                if (link.getAttribute('data-class') === classKey) {
+                    link.classList.add('active-class');
+                }
+            });
+        }
+        
+        // Listener per i link delle classi
+        document.querySelectorAll('.class-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                classKey = this.getAttribute('data-class');
+                localStorage.setItem(CURRENT_CLASS_KEY, classKey);
+                init(); // Ricarica tutto per la nuova classe
+            });
+        });
+
+        // --- GESTIONE SALVATAGGIO DATI (LocalStorage) ---
+        function saveData() {
+            if (!classKey) return;
+            localStorage.setItem(ATTENDANCE_KEY_PREFIX + classKey, JSON.stringify(attendanceStatus));
+            localStorage.setItem(CURRENT_DATE_KEY_PREFIX + classKey, currentDate.toISOString());
+        }
+
+        function loadData() {
+            if (!classKey) return;
+
+            const storedAttendance = localStorage.getItem(ATTENDANCE_KEY_PREFIX + classKey);
+            if (storedAttendance) {
+                attendanceStatus = JSON.parse(storedAttendance);
+            } else {
+                attendanceStatus = {};
+            }
+
+            const storedDate = localStorage.getItem(CURRENT_DATE_KEY_PREFIX + classKey);
+            if (storedDate) {
+                // Carica la data precedentemente salvata
+                currentDate = new Date(storedDate);
+            } else {
+                // IMPOSTA LA DATA DI OGGI COME DEFAULT
+                currentDate = new Date(); 
+            }
+            
+            // Per il registro, vogliamo solo Giorno, Mese, Anno (azzeriamo ore, minuti, ecc.)
+            currentDate.setHours(0, 0, 0, 0); 
+        }
+        
+        // Funzione helper per determinare lo stile della cella in base al codice
+        function getCellStyle(code) {
+            switch (code) {
+                case 'PL': // Presenza generale
+                case 'P': 
+                    return 'background-color: #d4edda; color: #155724; font-weight: bold;'; // Verde chiaro
+                case 'AL': // Assenza generale
+                case 'A':
+                    return 'background-color: #f8d7da; color: #721c24; font-weight: bold;'; // Rosso chiaro
+                case 'R':
+                    return 'background-color: #fff3cd; color: #856404; font-weight: bold;'; // Giallo (Ritardo)
+                case 'US':
+                    return 'background-color: #ffe5b4; color: #9c6800; font-weight: bold;'; // Arancione (Uscita)
+                case 'NOTA':
+                    return 'background-color: #cce5ff; color: #004085; font-weight: bold;'; // Blu (Nota)
+                case 'VOTO':
+                    return 'background-color: #dae8f5; color: #215e98; font-weight: bold;'; // Blu/Grigio (Voto)
+                default:
+                    return ''; // Nessuno stile per cella vuota
+            }
+        }
+
+        // --- LOGICA DI RENDER DEL CALENDARIO E CAMBIO DATA ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const monthYearDisplay = document.getElementById('calendar-month-year');
+            const dateDisplay = document.getElementById('current-date');
+            
+            // Imposta l'intestazione del mese/anno 
+            const monthName = currentDate.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }).toUpperCase();
+            monthYearDisplay.textContent = monthName;
+
+            // Imposta la data corrente nel display principale 
+            const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
+            const formattedDate = currentDate.toLocaleDateString('it-IT', options).toUpperCase();
+            const parts = formattedDate.split(',');
+            const dayOfWeek = parts.length > 1 ? parts[0].trim() : '';
+            const dateOnly = parts.length > 1 ? parts[1].trim() : formattedDate.trim();
+            
+            dateDisplay.textContent = dateOnly;
+            document.getElementById('day-detail').textContent = dayOfWeek;
+            
+            // Rigenera i giorni della settimana (intestazioni)
+            grid.innerHTML = `
+                <div class="calendar-day-name">L</div>
+                <div class="calendar-day-name">M</div>
+                <div class="calendar-day-name">M</div>
+                <div class="calendar-day-name">G</div>
+                <div class="calendar-day-name">V</div>
+                <div class="calendar-day-name">S</div>
+                <div class="calendar-day-name">D</div>
+            `; 
+
+            const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            let startDay = firstDayOfMonth.getDay();
+            if (startDay === 0) startDay = 7; 
+            startDay = startDay - 1; // 0=Lun, 6=Dom
+
+            const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+
+            // Giorni vuoti
+            for (let i = 0; i < startDay; i++) {
+                grid.innerHTML += `<div class="calendar-day-number calendar-day-empty"></div>`;
+            }
+
+            // Giorni del mese
+            const currentDay = currentDate.getDate();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                let classActive = '';
+                // Controllo se il giorno è il giorno correntemente selezionato
+                if (day === currentDay && currentMonth === firstDayOfMonth.getMonth() && currentYear === firstDayOfMonth.getFullYear()) {
+                    classActive = 'calendar-day-active';
+                }
+
+                grid.innerHTML += `<div class="calendar-day-number ${classActive}" data-day="${day}">${day}</div>`;
+            }
+
+            // Aggiunge listener per la selezione del giorno
+            document.querySelectorAll('.calendar-day-number:not(.calendar-day-empty)').forEach(dayElement => {
+                dayElement.addEventListener('click', function() {
+                    const newDay = parseInt(this.getAttribute('data-day'));
+                    currentDate.setDate(newDay); 
+                    
+                    renderCalendar(); 
+                    renderAttendance(); 
+                    saveData();
+                });
+            });
+
+            renderAttendance();
+            saveData();
+        }
+
+        // Funzione per cambiare mese
+        function changeMonth(offset) {
+            const currentDayOfMonth = currentDate.getDate();
+            currentDate.setMonth(currentDate.getMonth() + offset); 
+            const newDaysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+            const dayToSet = Math.min(currentDayOfMonth, newDaysInMonth);
+            currentDate.setDate(dayToSet);
+            
+            renderCalendar();
+        }
+        
+        // FUNZIONE AGGIUNTA PER CAMBIARE L'ANNO
+        function changeYear(offset) {
+            currentDate.setFullYear(currentDate.getFullYear() + offset);
+            renderCalendar();
+            saveData();
+        }
+
+        // --- LOGICA PRESENZE/ASSENZE ---
+
+        function generateEmptyActionRows(classKey) {
+            const students = studentData[classKey];
+            const formattedDate = currentDate.toISOString().split('T')[0];
+            const totalHours = 7; 
+
+            students.forEach(student => {
+                const studentAttendanceKey = `${student.id}_${formattedDate}`;
+
+                // Inizializza l'oggetto di stato se non esiste
+                if (!attendanceStatus[studentAttendanceKey]) {
+                    attendanceStatus[studentAttendanceKey] = {};
+                }
+                // Assicurati che tutte le ore siano inizializzate a vuoto se non hanno uno stato
+                for (let i = 1; i <= totalHours; i++) {
+                    if (attendanceStatus[studentAttendanceKey][`ora${i}`] === undefined) {
+                         attendanceStatus[studentAttendanceKey][`ora${i}`] = ''; 
+                    }
+                }
+            });
+        }
+
+        function renderStudentNames(classKey) {
+            const studentNamesContainer = document.getElementById('student-names');
+            studentNamesContainer.innerHTML = '';
+            
+            const students = studentData[classKey];
+            let studentHtml = '';
+
+            students.forEach((student, index) => {
+                studentHtml += `
+                    <div class="student-row">
+                        <div class="student-index">${index + 1}</div>
+                        <div class="student-name-cell">
+                            <span class="student-name">${student.name}</span>
+                            <span class="student-birthdate">(${student.date})</span>
+                            <button class="dots-button" data-student-id="${student.id}" onclick="openContextMenu(event, this)">...</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            studentNamesContainer.innerHTML = studentHtml;
+        }
+
+        function renderAttendance() {
+            const attendanceBodyContainer = document.getElementById('attendance-body');
+            attendanceBodyContainer.innerHTML = '';
+            
+            const students = studentData[classKey];
+            const formattedDate = currentDate.toISOString().split('T')[0];
+            const totalHours = 7;
+            let attendanceHtml = '';
+
+            // 1. Assicurati che tutti gli stati siano inizializzati per la data corrente
+            generateEmptyActionRows(classKey);
+
+            // 2. Genera il corpo della tabella delle presenze/assenze
+            students.forEach(student => {
+                const studentAttendanceKey = `${student.id}_${formattedDate}`;
+                const studentStatus = attendanceStatus[studentAttendanceKey] || {};
+                
+                let rowHtml = `<div class="attendance-row">`;
+                
+                // Cella generale (riepilogo) - Per semplicità mostriamo lo stato della prima ora.
+                let generalStatus = studentStatus.ora1 || '';
+                let generalStyle = getCellStyle(generalStatus);
+                rowHtml += `<div class="lesson-action-cell" style="width: 100px; ${generalStyle}">${generalStatus || ''}</div>`; 
+
+                // Celle per le singole ore
+                for (let i = 1; i <= totalHours; i++) {
+                    const status = studentStatus[`ora${i}`] || '';
+                    const displayCode = status; // Mostra il codice (P, A, R, NOTA, VOTO...)
+                    const cellStyle = getCellStyle(status);
+
+                    rowHtml += `
+                        <div 
+                            class="lesson-action-cell" 
+                            style="${cellStyle}" 
+                            data-student-key="${studentAttendanceKey}"
+                            data-ora="${i}"
+                            onclick="openContextMenu(event, this)"
+                        >
+                            ${displayCode}
+                        </div>
+                    `;
+                }
+
+                rowHtml += `</div>`;
+                attendanceHtml += rowHtml;
+            });
+
+            attendanceBodyContainer.innerHTML = attendanceHtml;
+        }
+        
+        // --- LOGICA MENU CONTESTUALE ---
+        function applySingleAction(studentAttendanceKey, hourIndex, action) {
+            if (!attendanceStatus[studentAttendanceKey]) return;
+
+            const hourKey = `ora${hourIndex}`;
+            
+            if (action === 'C') {
+                attendanceStatus[studentAttendanceKey][hourKey] = ''; // Cancella
+            } else if (['P', 'A', 'R', 'US'].includes(action)) {
+                attendanceStatus[studentAttendanceKey][hourKey] = action;
+            } else if (action === 'N') {
+                alert(`Inserisci Nota per l'alunno nell'ora ${hourIndex}.`);
+                attendanceStatus[studentAttendanceKey][hourKey] = 'NOTA'; 
+            } else if (action === 'V') {
+                alert(`Inserisci Voto per l'alunno nell'ora ${hourIndex}.`);
+                attendanceStatus[studentAttendanceKey][hourKey] = 'VOTO'; 
+            }
+            
+            document.getElementById('context-menu').style.display = 'none';
+            renderAttendance(); 
+            saveData();
+        }
+
+        function applyGeneralAction(studentAttendanceKey, action) {
+            if (!attendanceStatus[studentAttendanceKey]) return;
+            
+            const totalHours = 7;
+            for (let i = 1; i <= totalHours; i++) {
+                const hourKey = `ora${i}`;
+                if (action === 'C') {
+                    attendanceStatus[studentAttendanceKey][hourKey] = '';
+                } else if (['P', 'A', 'R', 'US'].includes(action)) {
+                    // Applica l'azione a tutte le ore
+                    attendanceStatus[studentAttendanceKey][hourKey] = action; 
+                }
+            }
+            
+            document.getElementById('context-menu').style.display = 'none';
+            renderAttendance();
+            saveData();
+        }
+
+        function openContextMenu(e, targetElement) {
+            e.stopPropagation(); 
+
+            const contextMenu = document.getElementById('context-menu');
+            let studentAttendanceKey;
+            let hourIndex = targetElement.getAttribute('data-ora'); 
+
+            if (targetElement.classList.contains('dots-button')) {
+                // Azione generale per l'intera giornata (dots-button)
+                const studentId = targetElement.getAttribute('data-student-id');
+                const formattedDate = currentDate.toISOString().split('T')[0];
+                studentAttendanceKey = `${studentId}_${formattedDate}`;
+                hourIndex = null; // Nessuna ora specifica
+            } else {
+                // Azione per una singola ora (lesson-action-cell)
+                studentAttendanceKey = targetElement.getAttribute('data-student-key');
+            }
+
+            // Imposta la posizione del menu contestuale
+            const rect = targetElement.getBoundingClientRect();
+            contextMenu.style.display = 'block';
+            
+            let topPos = rect.bottom + 5;
+            let leftPos = rect.left;
+
+            // Sposta a sinistra se troppo a destra
+            if (rect.right + 150 > window.innerWidth) {
+                leftPos = rect.right - 150; 
+            }
+            
+            contextMenu.style.top = `${topPos}px`;
+            contextMenu.style.left = `${leftPos}px`;
+            
+            // Imposta i dati target nel menu
+            contextMenu.setAttribute('data-target-student-key', studentAttendanceKey);
+            
+            // Nasconde le opzioni non appropriate per l'azione generale (Nota/Voto/Uscita Anticipata)
+            const noteVoteActions = contextMenu.querySelectorAll('[data-action="N"], [data-action="V"], [data-action="US"]');
+            
+            if (hourIndex) {
+                contextMenu.setAttribute('data-target-hour', hourIndex);
+                noteVoteActions.forEach(a => a.style.display = 'block');
+            } else {
+                contextMenu.removeAttribute('data-target-hour');
+                noteVoteActions.forEach(a => a.style.display = 'none');
+            }
+            
+            // Nascondi il menu al click fuori o alla pressione di ESC
+            const hideMenu = (event) => {
+                if (!contextMenu.contains(event.target) || event.key === 'Escape') {
+                    contextMenu.style.display = 'none';
+                    document.removeEventListener('click', hideMenu);
+                    document.removeEventListener('keydown', hideMenu);
+                }
+            };
+            // Aggiunge il listener solo sul documento (non su un elemento specifico)
+            setTimeout(() => {
+                document.addEventListener('click', hideMenu);
+                document.addEventListener('keydown', hideMenu);
+            }, 10); 
+        }
+
+        // Listener per le azioni nel menu contestuale
+        document.getElementById('context-menu').addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault(); 
+                const action = e.target.getAttribute('data-action');
+                const studentKey = this.getAttribute('data-target-student-key');
+                const hourIndex = this.getAttribute('data-target-hour');
+
+                // L'azione generale è valida solo per P, A, R, C
+                if (hourIndex) {
+                    // Azione su ora singola
+                    applySingleAction(studentKey, parseInt(hourIndex), action);
+                } else if (['P', 'A', 'R', 'C'].includes(action)) {
+                    // Azione generale
+                    applyGeneralAction(studentKey, action);
+                }
+            }
+        });
+
+        // --- INIZIALIZZAZIONE ---
+        function init() {
+            getClasseFromStorageOrUrl(); 
+            loadData(); 
+            renderStudentNames(classKey); // Mostra i nomi degli alunni della classe selezionata
+            renderCalendar(); // Avvia il render del calendario e delle presenze
+        }
+
+        // Avvia l'applicazione
+        window.onload = init;
+    </script>
+</body>
+</html>
