@@ -105,16 +105,414 @@
             background-color: var(--cv-dark-red);
         }
 
-        /* MODALI (Nota e Conferma) */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            z-index: 1001; 
-            left: 0; 
-            top: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-            /* NUOVA LOGICA DI CENTRAGGIO con Flexbox */
-            display
+        /* MODALE FORM (GIA' PRESENTE) */
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); padding-top: 60px; }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative; }
+        .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
+        .close-button:hover, .close-button:focus { color: #333; text-decoration: none; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
+        .form-group select, .form-group textarea, .form-group input[type="text"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.9em; }
+        .radio-group label { margin-right: 15px; font-weight: normal; }
+        .student-selection-box { border: 1px solid #ddd; padding: 10px; max-height: 150px; overflow-y: auto; background-color: #f9f9f9; border-radius: 4px; margin-top: 5px; }
+        .student-selection-box label { display: block; margin-bottom: 3px; font-weight: normal; font-size: 0.85em; }
+        .submit-btn { background-color: var(--cv-blue); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background-color 0.2s; }
+        .submit-btn:hover { background-color: #0056b3; }
+
+
+        /* STILI CANCELLAZIONE NOTE */
+        #notes-list { padding: 0; list-style: none; }
+        .note-card {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #fcfcfc;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            cursor: pointer; /* Indica che è cliccabile */
+            transition: background-color 0.1s;
+        }
+        .note-card:hover {
+            background-color: #fff0f0; /* Evidenzia al passaggio o click */
+        }
+        .note-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; font-size: 0.9em; }
+        .note-type { font-weight: bold; padding: 3px 8px; border-radius: 4px; color: white; }
+        .note-type.disciplinare { background-color: var(--cv-red); }
+        .note-type.semplice { background-color: var(--cv-blue); }
+        .note-details { font-size: 0.8em; color: #777; }
+        .note-comment { font-size: 1em; color: #333; margin-top: 10px; white-space: pre-wrap; }
+        .note-comment strong { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        
+        /* NUOVO MODALE DI CONFERMA CANCELLAZIONE */
+        #deleteConfirmModal .modal-content {
+            max-width: 400px;
+            text-align: center;
+        }
+        #deleteConfirmModal button {
+            margin: 5px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #confirmDeleteBtn {
+            background-color: var(--cv-red);
+            color: white;
+        }
+        #cancelDeleteBtn {
+            background-color: #ccc;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="registro_classe.html" class="header-title">CLASSEVIVA</a>
+        <span class="header-center">Comunicazioni</span>
+        <div class="user-icon">👤</div>
+    </div>
+    
+    <div class="tab-bar">
+        <div class="tab active">Informazioni e sondaggi</div>
+        <div class="tab">Agenda</div>
+        <div class="tab">Didattica</div>
+        <div class="tab">Bacheca</div>
+    </div>
+
+    <div class="content">
+        <div class="main-container">
+            <div class="main-content">
+                <div class="sidebar-box" style="padding: 15px;">
+                    <h2 style="margin-top: 0; font-size: 1.2em; color: var(--cv-red);">Note e Annotazioni</h2>
+                    <p style="font-size: 0.9em; text-align: left; padding: 5px 0; color: #555;">Clicca su una nota per l'opzione di cancellazione.</p>
+                    <ul id="notes-list">
+                        </ul>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="sidebar-box">
+                    <h4>Informazioni e sondaggi</h4>
+                    <p>Nessuna informazione / sondaggio disponibile</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="add-note-button" onclick="openModal('noteModal')">+</button>
+
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('noteModal')">&times;</span>
+            <h2 id="modal-title">Nuova Nota</h2>
+            <div class="form-group radio-group">
+                <label>Tipo di Annotazione:</label>
+                <input type="radio" id="nota-semplice" name="note_type" value="Nota" checked onchange="updateModalTitle()">
+                <label for="nota-semplice">Nota (Semplice)</label>
+                <input type="radio" id="nota-disciplinare" name="note_type" value="Nota Disciplinare" onchange="updateModalTitle()">
+                <label for="nota-disciplinare">Nota Disciplinare</label>
+            </div>
+            
+            <div class="form-group">
+                <label for="note-class">Seleziona Classe:</label>
+                <select id="note-class" onchange="renderStudentCheckboxes()">
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Seleziona Studente/i:</label>
+                <div class="student-selection-box" id="student-checkboxes">
+                    <p style="text-align: center; color: #999;">Seleziona una classe.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="note-comment">Commento:</label>
+                <textarea id="note-comment" rows="4" placeholder="Inserisci qui il commento..."></textarea>
+            </div>
+
+            <button class="submit-btn" onclick="saveNote()">Pubblica</button>
+        </div>
+    </div>
+
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content">
+            <h2>Conferma Cancellazione</h2>
+            <p>Sei sicuro di voler **cancellare definitivamente** questa nota?</p>
+            <button id="confirmDeleteBtn" onclick="deleteNote()">Sì, Cancella</button>
+            <button id="cancelDeleteBtn" onclick="closeModal('deleteConfirmModal')">Annulla</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Dati di base (simulazione) ---
+        const studentData = {
+            '1A': [
+                { id: 1, name: 'STELLINA DEMATTEIS' },
+                { id: 2, name: 'PANDINO DEMATTEIS' },
+                { id: 3, name: 'TARTARUGA BENUA' },
+                { id: 4, name: 'YUCKY BENUA' },
+                { id: 5, name: 'LOLLO BENUA' },
+                { id: 6, name: 'BRICIOLA DEMATTEIS' },
+                { id: 7, name: 'FLUFFY DEMATTEIS' },
+                { id: 8, name: 'TINA DEMATTEIS' },
+                { id: 9, name: 'GRIGETTA BENUA' },
+                { id: 10, name: 'LUNA DEMATTEIS' },
+            ],
+            '2A': [
+                { id: 11, name: 'CANE DEMATTEIS' },
+                { id: 12, name: 'CANE BENUA' },
+                { id: 13, name: 'MICIAN DEMATTEIS' },
+            ],
+            '3A': [
+                { id: 14, name: 'ALPHA SCARLETTI' },
+                { id: 15, name: 'BRAVO BIANCHI' },
+                { id: 16, name: 'CHARLIE NERI' },
+            ],
+            '4A': [
+                { id: 17, name: 'DELTA ROSSI' },
+                { id: 18, name: 'ECHO VERDI' },
+            ],
+            '5A': [
+                { id: 19, name: 'FOXTROT GIALLI' },
+                { id: 20, name: 'GOLF GRIGI' },
+            ]
+        };
+        const NOTES_STORAGE_KEY = 'cv_saved_notes';
+        let noteIdToDelete = null; // Variabile per memorizzare l'ID della nota da eliminare
+
+        // --- GESTIONE MODALE ---
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            if (modalId === 'noteModal') {
+                // Resetta i campi all'apertura del modale Note
+                document.getElementById('nota-semplice').checked = true;
+                updateModalTitle();
+                const selectElement = document.getElementById('note-class');
+                if (selectElement.options.length > 0) {
+                    selectElement.value = selectElement.options[0].value;
+                }
+                document.getElementById('note-comment').value = '';
+                renderStudentCheckboxes();
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            // Resetta l'ID della nota da eliminare quando si chiude il modale di conferma
+            if (modalId === 'deleteConfirmModal') {
+                noteIdToDelete = null;
+            }
+        }
+
+        function updateModalTitle() {
+            const type = document.querySelector('input[name="note_type"]:checked').value;
+            document.getElementById('modal-title').textContent = `Nuova ${type}`;
+        }
+        
+        // Chiudi il modale se si clicca al di fuori
+        window.onclick = function(event) {
+            const noteModal = document.getElementById('noteModal');
+            const deleteModal = document.getElementById('deleteConfirmModal');
+            if (event.target == noteModal) {
+                closeModal('noteModal');
+            }
+            if (event.target == deleteModal) {
+                closeModal('deleteConfirmModal');
+            }
+        }
+
+        // --- GESTIONE DATI CLASSE/STUDENTI ---
+
+        function initializeClassSelect() {
+            const select = document.getElementById('note-class');
+            select.innerHTML = '';
+            const classes = Object.keys(studentData);
+            
+            classes.forEach(cls => {
+                const option = document.createElement('option');
+                option.value = cls;
+                option.textContent = cls;
+                select.appendChild(option);
+            });
+            
+            renderStudentCheckboxes();
+        }
+
+        function renderStudentCheckboxes() {
+            const classKey = document.getElementById('note-class').value;
+            const container = document.getElementById('student-checkboxes');
+            container.innerHTML = '';
+
+            const students = studentData[classKey];
+            if (!students || students.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">Nessun alunno trovato per questa classe.</p>';
+                return;
+            }
+
+             const selectAllLabel = document.createElement('label');
+             selectAllLabel.style.fontWeight = 'bold';
+             selectAllLabel.style.borderBottom = '1px dashed #ccc';
+             selectAllLabel.style.paddingBottom = '5px';
+             selectAllLabel.innerHTML = `
+                <input type="checkbox" id="select-all-students" onclick="toggleSelectAll(this)">
+                SELEZIONA/DESELEZIONA TUTTI
+             `;
+             container.appendChild(selectAllLabel);
+
+
+            students.forEach(student => {
+                const label = document.createElement('label');
+                label.innerHTML = `
+                    <input type="checkbox" name="selected_students" value="${student.id}" data-name="${student.name}">
+                    ${student.name}
+                `;
+                container.appendChild(label);
+            });
+        }
+        
+        function toggleSelectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('#student-checkboxes input[name="selected_students"]');
+            checkboxes.forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+        }
+
+
+        // --- SALVATAGGIO, CARICAMENTO E CANCELLAZIONE NOTE ---
+
+        function getSavedNotes() {
+            const notesJson = localStorage.getItem(NOTES_STORAGE_KEY);
+            return notesJson ? JSON.parse(notesJson) : [];
+        }
+
+        function saveNote() {
+            const type = document.querySelector('input[name="note_type"]:checked').value;
+            const classKey = document.getElementById('note-class').value;
+            const comment = document.getElementById('note-comment').value.trim();
+            const selectedStudents = Array.from(document.querySelectorAll('input[name="selected_students"]:checked'))
+                .filter(checkbox => checkbox.id !== 'select-all-students')
+                .map(checkbox => ({ 
+                    id: checkbox.value, 
+                    name: checkbox.getAttribute('data-name') 
+                }));
+
+            if (selectedStudents.length === 0) {
+                alert("Devi selezionare almeno uno studente.");
+                return;
+            }
+
+            if (comment === "") {
+                alert("Il commento non può essere vuoto.");
+                return;
+            }
+
+            const newNote = {
+                id: Date.now(),
+                type: type,
+                class: classKey,
+                students: selectedStudents,
+                comment: comment,
+                date: new Date().toLocaleString('it-IT')
+            };
+
+            const notes = getSavedNotes();
+            notes.unshift(newNote);
+            localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(notes));
+
+            renderNotesList();
+            closeModal('noteModal');
+        }
+
+        // NUOVA FUNZIONE: Chiede conferma per l'eliminazione
+        function confirmDeleteNote(noteID) {
+            noteIdToDelete = noteID; // Memorizza l'ID della nota
+            openModal('deleteConfirmModal');
+        }
+
+        // NUOVA FUNZIONE: Cancella la nota
+        function deleteNote() {
+            if (noteIdToDelete !== null) {
+                let notes = getSavedNotes();
+                // Filtra e crea un nuovo array senza la nota con l'ID memorizzato
+                notes = notes.filter(note => note.id !== noteIdToDelete);
+                
+                localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(notes));
+                
+                closeModal('deleteConfirmModal');
+                renderNotesList(); // Aggiorna la lista
+            }
+        }
+
+        function renderNotesList() {
+            const notes = getSavedNotes();
+            const listContainer = document.getElementById('notes-list');
+            listContainer.innerHTML = '';
+
+            if (notes.length === 0) {
+                listContainer.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Nessuna nota inserita. Clicca il (+) in basso a destra per aggiungerne una.</p>';
+                return;
+            }
+
+            notes.forEach(note => {
+                const typeClass = note.type.includes('Disciplinare') ? 'disciplinare' : 'semplice';
+                
+                let studentNames = note.students.map(s => s.name.split(' ')[0]).slice(0, 3).join(', ');
+                if (note.students.length > 3) {
+                    studentNames += ` e altri ${note.students.length - 3}`;
+                } else if (note.students.length > 1) {
+                    studentNames = studentNames.replace(/,([^,]*)$/, ' e$1');
+                } else if (note.students.length === 1) {
+                    studentNames = note.students[0].name;
+                }
+
+                const listItem = document.createElement('li');
+                listItem.className = 'note-card';
+                // COLLEGA QUI L'EVENTO DI CLICK al click sinistro
+                listItem.setAttribute('onclick', `confirmDeleteNote(${note.id})`);
+                
+                // Opzionale: per il click destro
+                // listItem.setAttribute('oncontextmenu', `event.preventDefault(); confirmDeleteNote(${note.id})`);
+
+
+                listItem.innerHTML = `
+                    <div class="note-header">
+                        <span class="note-type ${typeClass}">${note.type}</span>
+                        <span class="note-details">
+                            Classe: ${note.class} | 
+                            Data: ${note.date}
+                        </span>
+                    </div>
+                    <div>
+                        <strong style="color: ${typeClass === 'disciplinare' ? 'var(--cv-red)' : 'var(--cv-blue)'};">
+                            ${note.students.length > 1 ? 'Alunni' : 'Alunno'} coinvolti: ${studentNames}
+                        </strong>
+                        <div class="note-comment">${note.comment}</div>
+                    </div>
+                `;
+                listContainer.appendChild(listItem);
+            });
+        }
+        
+        // --- INIZIALIZZAZIONE ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeClassSelect();
+            renderNotesList();
+        });
+
+        // Espone le funzioni globali
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.updateModalTitle = updateModalTitle;
+        window.renderStudentCheckboxes = renderStudentCheckboxes;
+        window.saveNote = saveNote;
+        window.toggleSelectAll = toggleSelectAll;
+        window.confirmDeleteNote = confirmDeleteNote; // Funzione appena aggiunta
+        window.deleteNote = deleteNote; // Funzione appena aggiunta
+    </script>
+</body>
+</html>
