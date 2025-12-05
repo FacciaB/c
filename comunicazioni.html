@@ -3,343 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLASSEVIVA - Registro di classe</title>
+    <title>ClasseViva - Comunicazioni</title>
     <style>
-        /* RESET E VARIABILI */
+        /* RESET E FONT */
         body { font-family: 'Open Sans', Arial, sans-serif; margin: 0; padding: 0; background-color: #f7f7f7; color: #333; }
+        
+        /* COLORI CLASSEVIVA */
         :root {
             --cv-red: #d8232a;
             --cv-yellow: #ffcc00;
+            --cv-green: #28a745;
             --cv-dark-red: #a01a20;
-            --cv-gray: #e9ecef;
+            --cv-blue: #007bff;
         }
 
-        /* INTESTAZIONE CLASSEVIVA */
-        .header-top { background-color: var(--cv-red); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .header-title { font-size: 1.5em; font-weight: bold; }
+        /* HEADER E NAVIGAZIONE */
+        .header { background-color: var(--cv-red); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header-title { font-size: 1.5em; font-weight: bold; text-decoration: none; color: white; }
         .header-center { font-size: 1.1em; font-weight: 300; }
         .user-icon { background-color: rgba(255, 255, 255, 0.2); padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; }
         
-        .header-info { background-color: var(--cv-yellow); color: #333; padding: 5px 20px; font-size: 0.9em; }
+        .tab-bar { 
+            background-color: #f0f0f0; 
+            border-bottom: 1px solid #ddd; 
+            display: flex; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .tab {
+            padding: 10px 20px;
+            font-size: 0.9em;
+            color: #555;
+            cursor: pointer;
+            border-right: 1px solid #ddd;
+            border-top: 3px solid transparent;
+            transition: border-top 0.2s, background-color 0.2s;
+        }
+        .tab.active {
+            font-weight: bold;
+            color: var(--cv-red);
+            background-color: white;
+            border-top: 3px solid var(--cv-red);
+            border-bottom: 1px solid white; 
+        }
 
-        /* NAVIGAZIONE ICONE RAPIDE */
-        .quick-links { text-align: center; padding: 15px 0; border-bottom: 1px solid #ddd; background-color: white; }
-        .quick-link { display: inline-block; margin: 0 15px; text-decoration: none; color: #555; font-size: 0.8em; }
-        .quick-link span { display: block; font-size: 24px; margin-bottom: 5px; }
-        .quick-link.active { border-bottom: 2px solid var(--cv-red); color: var(--cv-red); font-weight: bold; }
+        .content { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            margin-top: 20px;
+        }
 
-        /* STRUTTURA PRINCIPALE (Alunni + Registro) */
         .main-content {
-            display: flex;
+            min-height: 500px;
+        }
+
+        /* BOX "INFORMAZIONI E SONDAGGI" (A DESTRA) */
+        .sidebar-box {
             background-color: white;
             border: 1px solid #ccc;
-            margin: 20px;
-            max-height: 80vh; /* Limita l'altezza per mostrare lo scroll */
-        }
-        
-        /* COLONNA ALUNNI */
-        .alunni-col {
-            width: 300px;
-            border-right: 1px solid #ccc;
-            overflow-y: scroll; /* Permette lo scroll indipendente degli alunni */
-            flex-shrink: 0; /* Impedisce alla colonna di restringersi */
-            background-color: var(--cv-gray);
-        }
-        .alunni-header {
+            border-radius: 4px;
             padding: 10px;
-            font-weight: bold;
-            background-color: #f0f0f0;
-            border-bottom: 1px solid #ccc;
-            position: sticky; /* Fissa l'header degli alunni */
-            top: 0;
-            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
         }
-        .alunno-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 10px;
-            border-bottom: 1px solid #e0e0e0;
+        .sidebar-box h4 {
+            margin-top: 0;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            font-size: 1em;
+            color: #333;
+        }
+        .sidebar-box p {
             font-size: 0.9em;
-            cursor: pointer;
-        }
-        .alunno-row:hover {
-            background-color: #f0f0f0;
-        }
-        .alunno-name { font-weight: bold; }
-        .alunno-details { font-size: 0.8em; color: #666; }
-        .alunno-menu { color: #888; font-weight: bold; padding-left: 10px; }
-
-        /* TABELLA REGISTRO */
-        .registro-col {
-            flex-grow: 1; /* Occupa lo spazio rimanente */
-            overflow-x: scroll; /* Permette lo scroll orizzontale per le ore */
-        }
-        .registro-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .registro-table th, .registro-table td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            min-width: 100px;
+            color: #777;
             text-align: center;
+            padding: 20px 0;
+        }
+
+        /* PULSANTE AGGIUNGI NOTA (+) */
+        .add-note-button {
+            background-color: var(--cv-red);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
             height: 40px;
-        }
-        .registro-table th {
-            background-color: #f0f0f0;
-            color: var(--cv-dark-red);
-            font-size: 0.85em;
-            font-weight: normal;
-        }
-        .lezione-cell {
-            padding: 0;
-            height: 40px;
-        }
-        .lezione-btn {
-            display: block;
-            width: 100%;
-            height: 100%;
-            line-height: 40px;
-            text-transform: uppercase;
-            font-size: 0.8em;
+            font-size: 24px;
+            line-height: 1;
+            text-align: center;
             cursor: pointer;
-            border: 1px solid transparent;
-            box-sizing: border-box;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: background-color 0.2s;
         }
-        .lezione-attiva {
-            font-weight: bold;
-            color: var(--cv-dark-red);
-            border: 1px dashed var(--cv-dark-red);
-            background-color: #fffaf0;
-        }
-        .lezione-inattiva {
-            color: #ccc;
+        .add-note-button:hover {
+            background-color: var(--cv-dark-red);
         }
 
-
-        /* MODALI (Stile Corretto per Centratura) */
+        /* MODALI (Nota e Conferma) */
         .modal { 
             display: none; 
             position: fixed; 
-            z-index: 10000; /* Alto z-index per sovrapporre tutto */
+            z-index: 1001; 
             left: 0; 
             top: 0; 
             width: 100%; 
             height: 100%; 
+            overflow: auto; 
             background-color: rgba(0,0,0,0.4); 
-            
-            /* LOGICA DI CENTRAGGIO FLEXBOX */
-            display: flex;
-            align-items: center;    /* Centra verticalmente */
-            justify-content: center; /* Centra orizzontalmente */
-        }
-        .modal-content { 
-            background-color: #fefefe; 
-            margin: auto; /* Permette il centraggio con flexbox */
-            padding: 25px; 
-            border: 1px solid #888; 
-            border-radius: 8px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
-            position: relative; 
-            max-width: 450px;
-            text-align: center;
-        }
-        
-        /* Stili per il Modale di Esempio (Conferma) */
-        #confirmModal p { font-size: 1.1em; margin-bottom: 20px; }
-        #confirmModal button { 
-            padding: 10px 20px; 
-            margin: 0 10px;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        #confirmModal .confirm-btn { background-color: var(--cv-red); color: white; }
-        #confirmModal .confirm-btn:hover { background-color: var(--cv-dark-red); }
-        #confirmModal .cancel-btn { background-color: #ccc; color: #333; }
-        #confirmModal .cancel-btn:hover { background-color: #bbb; }
-
-    </style>
-</head>
-<body>
-
-    <div class="header-top">
-        <span class="header-title">CLASSEVIVA</span>
-        <span class="header-center">Registro di classe</span>
-        <div class="user-icon">👤</div>
-    </div>
-    
-    <div class="header-info">
-        Ultimo accesso: 03/12 ore 16:00 (Simulazione)
-    </div>
-
-    <div class="quick-links">
-        <a href="#" class="quick-link active"><span>📅</span> Appello</a>
-        <a href="comunicazioni.html" class="quick-link"><span>💬</span> Comunicazioni</a>
-        <a href="#" class="quick-link"><span>🗓️</span> Agenda di oggi</a>
-        <a href="#" class="quick-link"><span>✍️</span> Firma</a>
-        <a href="#" class="quick-link"><span>👥</span> Compresenza</a>
-        <a href="#" class="quick-link"><span>🚫</span> Assenza</a>
-        <a href="#" class="quick-link"><span>💯</span> Valutazioni</a>
-        </div>
-
-    <div style="background-color: var(--cv-gray); padding: 15px 20px; font-size: 1.1em; border-bottom: 1px solid #ccc;">
-        Registro di classe di **1A** del giorno
-    </div>
-
-    <div class="main-content">
-        
-        <div class="alunni-col">
-            <div class="alunni-header">Alunni</div>
-            <div id="alunni-list">
-                </div>
-        </div>
-
-        <div class="registro-col">
-            <table class="registro-table">
-                <thead>
-                    <tr>
-                        <th style="min-width: 120px;">Giornale del professore</th>
-                        <th>1 ora</th>
-                        <th>2 ora</th>
-                        <th>3 ora</th>
-                        <th>4 ora</th>
-                        <th>5 ora</th>
-                        <th>6 ora</th>
-                        <th>7 ora</th>
-                    </tr>
-                </thead>
-                <tbody id="registro-body">
-                    <tr>
-                        <td style="font-weight: bold; text-align: left; background-color: #f8f8f8;">Lezioni</td>
-                        <td class="lezione-cell"><button class="lezione-btn lezione-attiva">LEZIONE</button></td>
-                        <td class="lezione-cell"><button class="lezione-btn lezione-attiva">LEZIONE</button></td>
-                        <td class="lezione-cell"><button class="lezione-btn lezione-inattiva">LEZIONE</button></td>
-                        <td class="lezione-cell"><button class="lezione-btn lezione-inattiva">LEZIONE</button></td>
-                        <td class="lezione-cell"><button class="lezione-btn lezione-inattiva">LEZIONE</button></td>
-                        <td class="lezione-cell"><button class="lezione-btn lezione-inattiva">LEZIONE</button></td>
-                        <td class="lezione-cell"><button class="lezione-btn lezione-inattiva">LEZIONE</button></td>
-                    </tr>
-                    </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <h2>Conferma Operazione</h2>
-            <p>Stai per eseguire un'azione. Vuoi procedere?</p>
-            <button class="confirm-btn" onclick="executeAction()">Conferma</button>
-            <button class="cancel-btn" onclick="closeModal('confirmModal')">Annulla</button>
-        </div>
-    </div>
-
-    <script>
-        // Dati degli Alunni (estesi come da screenshot)
-        const students = [
-            { id: 1, name: 'STELLINA DEMATTEIS', dob: '(01-01-2007)' },
-            { id: 2, name: 'PANDINO DEMATTEIS', dob: '(02-01-2007)' },
-            { id: 3, name: 'TARTARUGA BENUA', dob: '(03-01-2007)' },
-            { id: 4, name: 'YUCKY BENUA', dob: '(04-01-2007)' },
-            { id: 5, name: 'LOLLO BENUA', dob: '(05-01-2007)' },
-            { id: 6, name: 'BRICIOLA DEMATTEIS', dob: '(06-01-2007)' },
-            { id: 7, name: 'FLUFFY DEMATTEIS', dob: '(07-01-2007)' },
-            { id: 8, name: 'TINA DEMATTEIS', dob: '(08-01-2007)' },
-            { id: 9, name: 'GRIGETTA BENUA', dob: '(09-01-2007)' },
-            { id: 10, name: 'LUNA DEMATTEIS', dob: '(10-01-2007)' },
-            { id: 11, name: 'LUNA BENUA', dob: '(11-01-2007)' },
-            { id: 12, name: 'KENDY DEMATTEIS', dob: '(12-01-2007)' },
-            { id: 13, name: 'PAPERO DEMATTEIS', dob: '(13-01-2007)' },
-            { id: 14, name: 'ATTIGLIO DEMATTEIS', dob: '(14-01-2007)' },
-            { id: 15, name: 'SUNNY BENUA', dob: '(15-01-2007)' },
-            { id: 16, name: 'CURT DEMATTEIS', dob: '(16-01-2007)' },
-            { id: 17, name: 'BUNNY BENUA', dob: '(17-01-2007)' },
-            // Aggiungi altri alunni se necessario
-        ];
-        
-        // Funzione per generare le righe degli alunni e il registro
-        function renderStudentRows() {
-            const listContainer = document.getElementById('alunni-list');
-            const tableBody = document.getElementById('registro-body');
-            
-            students.forEach((student, index) => {
-                // 1. Riga Alunno nella Colonna Fissa
-                const alunnoDiv = document.createElement('div');
-                alunnoDiv.className = 'alunno-row';
-                alunnoDiv.innerHTML = `
-                    <span style="width: 20px;">${index + 1}</span>
-                    <div style="flex-grow: 1; text-align: left;">
-                        <span class="alunno-name">${student.name}</span>
-                        <span class="alunno-details">${student.dob}</span>
-                    </div>
-                    <span class="alunno-menu">...</span>
-                `;
-                listContainer.appendChild(alunnoDiv);
-
-                // 2. Riga nel Corpo della Tabella Registro
-                const registroRow = document.createElement('tr');
-                registroRow.id = `row-${student.id}`;
-                registroRow.innerHTML = `
-                    <td style="text-align: left;"></td>
-                    <td onclick="openConfirmModal(${student.id}, 1)"></td>
-                    <td onclick="openConfirmModal(${student.id}, 2)"></td>
-                    <td onclick="openConfirmModal(${student.id}, 3)"></td>
-                    <td onclick="openConfirmModal(${student.id}, 4)"></td>
-                    <td onclick="openConfirmModal(${student.id}, 5)"></td>
-                    <td onclick="openConfirmModal(${student.id}, 6)"></td>
-                    <td onclick="openConfirmModal(${student.id}, 7)"></td>
-                `;
-                tableBody.appendChild(registroRow);
-            });
-        }
-
-        // --- GESTIONE MODALE DI CONFERMA (Esempio) ---
-
-        // Funzione modificata per aprire il modale
-        function openModal(modalId) {
-            // Usiamo 'flex' per attivare il centraggio Flexbox
-            document.getElementById(modalId).style.display = 'flex'; 
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
-        // Funzione che simula l'apertura del modale al click su una cella
-        function openConfirmModal(studentId, hour) {
-            const studentName = students.find(s => s.id === studentId).name;
-            alert(`Cliccato su: ${studentName}, Ora: ${hour}. Ora apro il modale centrato.`);
-            openModal('confirmModal');
-            // Qui potresti impostare la logica per la conferma di Presenza/Assenza, etc.
-        }
-        
-        // Funzione di esempio che verrebbe eseguita premendo "Conferma"
-        function executeAction() {
-            alert("Azione confermata!");
-            closeModal('confirmModal');
-        }
-
-        // Chiudi i modali se si clicca al di fuori
-        window.onclick = function(event) {
-            const confirmModal = document.getElementById('confirmModal');
-            if (event.target == confirmModal) {
-                closeModal('confirmModal');
-            }
-        }
-
-        // --- INIZIALIZZAZIONE ---
-        document.addEventListener('DOMContentLoaded', () => {
-            renderStudentRows();
-        });
-
-        // Espone le funzioni globali
-        window.openModal = openModal;
-        window.closeModal = closeModal;
-        window.openConfirmModal = openConfirmModal;
-        window.executeAction = executeAction;
-    </script>
-</body>
-</html>
+            /* NUOVA LOGICA DI CENTRAGGIO con Flexbox */
+            display
