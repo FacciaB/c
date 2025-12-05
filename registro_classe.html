@@ -26,10 +26,37 @@
         .header-info { background-color: var(--cv-yellow); color: #333; padding: 5px 20px; font-size: 0.9em; }
 
         /* NAVIGAZIONE ICONE RAPIDE */
-        .quick-links { text-align: center; padding: 15px 0; border-bottom: 1px solid #ddd; background-color: white; }
-        .quick-link { display: inline-block; margin: 0 15px; text-decoration: none; color: #555; font-size: 0.8em; }
-        .quick-link span { display: block; font-size: 24px; margin-bottom: 5px; }
-        .quick-link.active { border-bottom: 2px solid var(--cv-red); color: var(--cv-red); font-weight: bold; }
+        .menu-nav {
+            display: flex;
+            justify-content: center;
+            background-color: white;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #555;
+            font-size: 0.8em;
+            margin: 0 10px;
+            padding: 5px;
+            border-bottom: 2px solid transparent;
+            transition: border-bottom 0.3s;
+        }
+
+        .icon-item div {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .icon-active {
+            border-bottom: 2px solid var(--cv-red);
+            color: var(--cv-red);
+            font-weight: bold;
+        }
 
         /* CONTENUTO PRINCIPALE (Registro e Controlli) */
         .container {
@@ -196,7 +223,105 @@
         }
         .appello-cell.presente { background-color: #e6ffe6; color: var(--cv-green); }
         .appello-cell.assente { background-color: var(--cv-light-red); color: var(--cv-red); }
+
+        /* STILI CALENDARIO LATERALE */
+        .sidebar-calendar {
+            width: 180px;
+            flex-shrink: 0;
+            border: 1px solid #ccc;
+            background-color: white;
+            height: fit-content;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-size: 0.85em;
+        }
+
+        .calendar-header {
+            text-align: center;
+            padding: 8px 0;
+            background-color: var(--cv-gray);
+            font-weight: bold;
+            color: var(--cv-dark-red);
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calendar-header span {
+            padding: 0 10px;
+            cursor: default;
+        }
+
+        .calendar-header a {
+            color: var(--cv-dark-red);
+            text-decoration: none;
+            padding: 0 10px;
+            font-size: 1.2em;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            padding: 5px 0;
+        }
+
+        .day-label {
+            font-weight: bold;
+            padding: 3px 0;
+            color: #777;
+        }
+
+        .day-number {
+            padding: 4px;
+            cursor: pointer;
+            color: #333;
+            border-radius: 4px;
+            transition: background-color 0.1s;
+        }
         
+        .day-number:hover:not(.active-day):not(.past-day) {
+            background-color: #f0f0f0;
+        }
+
+        .day-number.active-day {
+            background-color: var(--cv-red);
+            color: white;
+            font-weight: bold;
+        }
+
+        .day-number.past-day {
+            color: #aaa;
+            cursor: default; 
+        }
+        
+        /* STILI AGGIUNTIVI PER PULIZIA */
+        .class-selector a.active {
+            font-weight: bold;
+            color: var(--cv-red);
+        }
+        .lezione-btn {
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            color: #555;
+            padding: 5px;
+            font-size: 0.7em;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .lezione-btn.lezione-attiva {
+            background-color: var(--cv-green);
+            color: white;
+            border-color: var(--cv-green);
+        }
+        .filter-buttons button {
+            padding: 5px 10px;
+            margin-right: 10px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
@@ -210,18 +335,18 @@
     <div class="header-info">Ultimo accesso: 03/12 ore 16:00 (Simulazione)</div>
 
     <div class="menu-nav">
-            <a href="registro_classe.html" class="icon-item icon-active"><div class="i-appello">📖</div>Appello</a>
-            <a href="comunicazioni.html" class="icon-item"><div class="i-comunicazioni">📢</div>Comunicazioni</a>
-            <a href="agenda_oggi.html" class="icon-item"><div class="i-agenda">📅</div>Agenda di oggi</a>
-            <a href="firma.html" class="icon-item"><div class="i-firma">✍️</div>Firma</a>
-            <a href="compresenza.html" class="icon-item"><div class="i-comprensenza">👥</div>Comprensenza</a>
-            <a href="assenze.html" class="icon-item"><div class="i-assenze">🚫</div>Assenze</a>
-            <a href="valutazioni.html" class="icon-item"><div class="i-valutazioni">💯</div>Valutazioni</a>
-            <a href="agenda.html" class="icon-item"><div class="i-agenda-prof">🗓️</div>Agenda</a>
-            <a href="didattica.html" class="icon-item"><div class="i-valutazioni">💯</div>Didattica</a>
-            <a href="mie_classi.html" class="icon-item" id="classi-link"><div class="i-classi">🏫</div>Le mie classi</a>
-            <a href="gruppi.html" class="icon-item"><div class="i-tutti">🌐</div>Tutti i gruppi</a>
-        </div>
+        <a href="registro_classe.html" class="icon-item icon-active"><div class="i-appello">📖</div>Appello</a>
+        <a href="comunicazioni.html" class="icon-item"><div class="i-comunicazioni">📢</div>Comunicazioni</a>
+        <a href="agenda_oggi.html" class="icon-item"><div class="i-agenda">📅</div>Agenda di oggi</a>
+        <a href="firma.html" class="icon-item"><div class="i-firma">✍️</div>Firma</a>
+        <a href="compresenza.html" class="icon-item"><div class="i-comprensenza">👥</div>Comprensenza</a>
+        <a href="assenze.html" class="icon-item"><div class="i-assenze">🚫</div>Assenze</a>
+        <a href="valutazioni.html" class="icon-item"><div class="i-valutazioni">💯</div>Valutazioni</a>
+        <a href="agenda.html" class="icon-item"><div class="i-agenda-prof">🗓️</div>Agenda</a>
+        <a href="didattica.html" class="icon-item"><div class="i-valutazioni">💯</div>Didattica</a>
+        <a href="mie_classi.html" class="icon-item" id="classi-link"><div class="i-classi">🏫</div>Le mie classi</a>
+        <a href="gruppi.html" class="icon-item"><div class="i-tutti">🌐</div>Tutti i gruppi</a>
+    </div>
 
     <div class="container">
         <div class="registro-wrapper">
@@ -245,7 +370,7 @@
                     <button id="btn-tutti-assenti" onclick="setAllPresences('assente')">Appello: Tutti Assenti</button>
                     <button id="btn-cancella-presenze" onclick="setAllPresences('vuoto')">Cancella Tutte le Presenze</button>
                 </div>
-                <p style="font-size: 0.9em; margin-top: 10px; color: #555;">lezione MARTEDÌ 02 DICEMBRE 2025</p>
+                <p id="current-lesson-date" style="font-size: 0.9em; margin-top: 10px; color: #555;">lezione MARTEDÌ 02 DICEMBRE 2025</p>
             </div>
 
             <div class="main-grid">
@@ -295,15 +420,52 @@
         </div>
 
         <div class="sidebar-calendar">
-             </div>
-    </div>
-
-    <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <h2>Conferma Operazione</h2>
-            <p>Stai per eseguire un'azione. Vuoi procedere?</p>
-            <button class="confirm-btn" onclick="executeAction()">Conferma</button>
-            <button class="cancel-btn" onclick="closeModal('confirmModal')">Annulla</button>
+            <div class="calendar-header">
+                <a href="#" onclick="alert('Naviga al mese precedente')">&lt;&lt;</a>
+                <span>DICEMBRE 2025</span>
+                <a href="#" onclick="alert('Naviga al mese successivo')">&gt;&gt;</a>
+            </div>
+            <div class="calendar-days">
+                <div class="day-label">L</div>
+                <div class="day-label">M</div>
+                <div class="day-label">M</div>
+                <div class="day-label">G</div>
+                <div class="day-label">V</div>
+                <div class="day-label">S</div>
+                <div class="day-label">D</div>
+                
+                <div class="day-number past-day" onclick="changeDate(1, 12, 2025, this)">1</div>
+                <div class="day-number active-day" id="day-2" onclick="changeDate(2, 12, 2025, this)">2</div>
+                <div class="day-number" onclick="changeDate(3, 12, 2025, this)">3</div>
+                <div class="day-number" onclick="changeDate(4, 12, 2025, this)">4</div>
+                <div class="day-number" onclick="changeDate(5, 12, 2025, this)">5</div>
+                <div class="day-number" onclick="changeDate(6, 12, 2025, this)">6</div>
+                <div class="day-number" onclick="changeDate(7, 12, 2025, this)">7</div>
+                <div class="day-number" onclick="changeDate(8, 12, 2025, this)">8</div>
+                <div class="day-number" onclick="changeDate(9, 12, 2025, this)">9</div>
+                <div class="day-number" onclick="changeDate(10, 12, 2025, this)">10</div>
+                <div class="day-number" onclick="changeDate(11, 12, 2025, this)">11</div>
+                <div class="day-number" onclick="changeDate(12, 12, 2025, this)">12</div>
+                <div class="day-number" onclick="changeDate(13, 12, 2025, this)">13</div>
+                <div class="day-number" onclick="changeDate(14, 12, 2025, this)">14</div>
+                <div class="day-number" onclick="changeDate(15, 12, 2025, this)">15</div>
+                <div class="day-number" onclick="changeDate(16, 12, 2025, this)">16</div>
+                <div class="day-number" onclick="changeDate(17, 12, 2025, this)">17</div>
+                <div class="day-number" onclick="changeDate(18, 12, 2025, this)">18</div>
+                <div class="day-number" onclick="changeDate(19, 12, 2025, this)">19</div>
+                <div class="day-number" onclick="changeDate(20, 12, 2025, this)">20</div>
+                <div class="day-number" onclick="changeDate(21, 12, 2025, this)">21</div>
+                <div class="day-number" onclick="changeDate(22, 12, 2025, this)">22</div>
+                <div class="day-number" onclick="changeDate(23, 12, 2025, this)">23</div>
+                <div class="day-number" onclick="changeDate(24, 12, 2025, this)">24</div>
+                <div class="day-number" onclick="changeDate(25, 12, 2025, this)">25</div>
+                <div class="day-number" onclick="changeDate(26, 12, 2025, this)">26</div>
+                <div class="day-number" onclick="changeDate(27, 12, 2025, this)">27</div>
+                <div class="day-number" onclick="changeDate(28, 12, 2025, this)">28</div>
+                <div class="day-number" onclick="changeDate(29, 12, 2025, this)">29</div>
+                <div class="day-number" onclick="changeDate(30, 12, 2025, this)">30</div>
+                <div class="day-number" onclick="changeDate(31, 12, 2025, this)">31</div>
+            </div>
         </div>
     </div>
 
@@ -329,21 +491,24 @@
             { id: 17, name: 'BUNNY BENUA', dob: '(17-01-2007)' },
         ];
         
-        // Stato appello (simulazione: salviamo lo stato nel browser)
-        const APPELLO_STORAGE_KEY = 'cv_appello_state';
+        // Chiave per tenere traccia dello stato attivo della data
+        const APPELLO_STORAGE_KEY_CURRENT = 'cv_appello_key_current';
+        
+        // Chiave di default per lo stato iniziale (02 Dicembre)
+        const DEFAULT_DATE_KEY = 'cv_appello_state_2025_12_02';
 
-        let appelloState = JSON.parse(localStorage.getItem(APPELLO_STORAGE_KEY));
-        if (!appelloState) {
-            appelloState = initializeAppelloState();
-            saveAppelloState();
-        }
+        let appelloState = {};
+        let currentDayElement = null;
+
+        // --- GESTIONE DELLO STATO (Data-specifico) ---
 
         function initializeAppelloState() {
             const state = {};
             students.forEach(student => {
+                // *** MODIFICATO QUI: Stato iniziale tutte le ore su 'vuoto' (appello non fatto) ***
                 state[student.id] = { 
-                    1: 'presente', 
-                    2: 'presente', 
+                    1: 'vuoto', 
+                    2: 'vuoto', 
                     3: 'vuoto', 
                     4: 'vuoto', 
                     5: 'vuoto', 
@@ -354,13 +519,65 @@
             return state;
         }
 
+        function loadAppelloState(dateKey) {
+            const savedState = localStorage.getItem(dateKey);
+            if (savedState) {
+                appelloState = JSON.parse(savedState);
+            } else {
+                // Se non c'è stato salvato per questa data, crea uno stato iniziale vuoto
+                appelloState = initializeAppelloState();
+            }
+        }
+
         function saveAppelloState() {
-            localStorage.setItem(APPELLO_STORAGE_KEY, JSON.stringify(appelloState));
+            const key = localStorage.getItem(APPELLO_STORAGE_KEY_CURRENT) || DEFAULT_DATE_KEY; 
+            localStorage.setItem(key, JSON.stringify(appelloState));
         }
 
         function getCellStatus(studentId, hour) {
             return appelloState[studentId] ? appelloState[studentId][hour] : 'vuoto';
         }
+
+        // --- FUNZIONE PRINCIPALE DI CAMBIO DATA ---
+
+        function changeDate(day, month, year, clickedElement) {
+            const newDateKey = `cv_appello_state_${year}_${month}_${day}`;
+            
+            // 1. Salva lo stato ATTUALE prima di cambiarlo
+            saveAppelloState();
+
+            // 2. Carica il nuovo stato per la data selezionata
+            loadAppelloState(newDateKey);
+            localStorage.setItem(APPELLO_STORAGE_KEY_CURRENT, newDateKey);
+
+            // 3. Aggiorna l'indicatore della data nel filtro
+            const dateObj = new Date(year, month - 1, day); 
+            
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = dateObj.toLocaleDateString('it-IT', dateOptions).toUpperCase();
+            const dateText = `lezione ${dateString}`;
+            
+            const dateParagraph = document.getElementById('current-lesson-date');
+            if (dateParagraph) {
+                dateParagraph.textContent = dateText;
+            }
+
+            // 4. Aggiorna l'aspetto del calendario
+            if (currentDayElement) {
+                currentDayElement.classList.remove('active-day');
+            }
+            clickedElement.classList.add('active-day');
+            currentDayElement = clickedElement;
+
+            // 5. RENDERIZZA IL REGISTRO CON I NUOVI DATI
+            renderStudentRows();
+            
+            // Scrolla in cima al registro (opzionale)
+            document.querySelector('.registro-col').scrollTop = 0; 
+        }
+
+
+        // --- GESTIONE FUNZIONALITÀ APPELLO E INTERFACCIA ---
 
         // Funzione per generare le righe degli alunni e il registro
         function renderStudentRows() {
@@ -379,7 +596,7 @@
                 // 1. Riga Alunno nella Colonna Fissa
                 const alunnoDiv = document.createElement('div');
                 alunnoDiv.className = 'alunno-row';
-                alunnoDiv.id = `alunno-row-${student.id}`; // Aggiunto ID per riferimento
+                alunnoDiv.id = `alunno-row-${student.id}`; 
                 alunnoDiv.innerHTML = `
                     <span style="width: 20px;">${index + 1}</span>
                     <div style="flex-grow: 1; text-align: left;">
@@ -405,14 +622,13 @@
                     cell.setAttribute('data-hour', h);
                     cell.onclick = function() { togglePresence(student.id, h, this); };
 
+                    // Usa lo stato attuale (vuoto se è il primo carico)
                     updateCellAppearance(cell, getCellStatus(student.id, h));
                 }
             });
 
             listContainer.appendChild(alunniListFragment);
         }
-
-        // --- GESTIONE FUNZIONALITÀ APPELLO ---
 
         function updateCellAppearance(cell, status) {
             cell.textContent = '';
@@ -441,12 +657,12 @@
 
             appelloState[studentId][hour] = newStatus;
             updateCellAppearance(cellElement, newStatus);
-            saveAppelloState();
+            saveAppelloState(); 
         }
 
         function setAllPresences(status) {
             const actionText = status === 'presente' ? 'Tutti Presenti' : (status === 'assente' ? 'Tutti Assenti' : 'Cancellazione Presenze');
-            if (!confirm(`Sei sicuro di voler impostare l'appello di TUTTI gli alunni su: ${actionText}?`)) {
+            if (!confirm(`Sei sicuro di voler impostare l'appello di TUTTI gli alunni per tutte le ore su: ${actionText}?`)) {
                 return;
             }
             
@@ -460,36 +676,28 @@
             renderStudentRows();
         }
 
-        // --- GESTIONE MODALE (Centrato) ---
-
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex'; 
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
-        function executeAction() {
-            alert("Azione confermata!");
-            closeModal('confirmModal');
-        }
-
-        window.onclick = function(event) {
-            const confirmModal = document.getElementById('confirmModal');
-            if (event.target == confirmModal) {
-                closeModal('confirmModal');
-            }
-        }
 
         // --- INIZIALIZZAZIONE ---
         document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Determina quale data chiave usare all'avvio
+            const initialKey = localStorage.getItem(APPELLO_STORAGE_KEY_CURRENT) || DEFAULT_DATE_KEY;
+            localStorage.setItem(APPELLO_STORAGE_KEY_CURRENT, initialKey);
+            
+            // 2. Carica lo stato in base alla chiave iniziale
+            loadAppelloState(initialKey);
+            
+            // 3. Trova l'elemento giorno attivo all'avvio (il 2 Dicembre di default)
+            currentDayElement = document.querySelector('.day-number.active-day');
+            
+            // 4. Ridisegna l'interfaccia con lo stato caricato
             renderStudentRows();
         });
 
         // Espone le funzioni globali
         window.togglePresence = togglePresence;
         window.setAllPresences = setAllPresences;
+        window.changeDate = changeDate; 
     </script>
 </body>
 </html>
