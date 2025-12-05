@@ -3,356 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClasseViva - Registro di Classe Funzionante</title>
+    <title>CLASSEVIVA - Registro di classe</title>
     <style>
-        /* RESET E FONT */
+        /* RESET E VARIABILI */
         body { font-family: 'Open Sans', Arial, sans-serif; margin: 0; padding: 0; background-color: #f7f7f7; color: #333; }
-        
-        /* COLORI CLASSEVIVA */
         :root {
             --cv-red: #d8232a;
             --cv-yellow: #ffcc00;
-            --cv-green: #28a745;
             --cv-dark-red: #a01a20;
+            --cv-gray: #e9ecef;
+            --cv-green: #28a745;
+            --cv-light-red: #ffcccc;
+            --row-height: 40px; /* Altezza uniforme per tutte le righe dei dati */
         }
 
-        /* HEADER E NAVIGAZIONE */
-        .header { background-color: var(--cv-red); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .header-title { font-size: 1.5em; font-weight: bold; text-decoration: none; color: white; }
+        /* INTESTAZIONE CLASSEVIVA */
+        .header-top { background-color: var(--cv-red); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header-title { font-size: 1.5em; font-weight: bold; }
         .header-center { font-size: 1.1em; font-weight: 300; }
         .user-icon { background-color: rgba(255, 255, 255, 0.2); padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; }
         
-        .last-access-bar { background-color: var(--cv-yellow); color: #333; padding: 5px 20px; font-size: 0.85em; font-weight: bold; text-shadow: none; }
-        
-        .menu-nav-container { background-color: white; padding: 10px 0; border-bottom: 1px solid #ddd; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .menu-nav { display: flex; justify-content: center; gap: 10px; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .icon-item { text-align: center; font-size: 0.7em; color: #555; cursor: pointer; text-decoration: none; display: flex; flex-direction: column; align-items: center; padding: 5px; min-width: 60px; transition: color 0.1s; }
-        .icon-item:hover { color: var(--cv-red); }
-        .icon-item > div { 
-            font-size: 1.5em; 
-            height: 25px; 
-            margin-bottom: 5px; 
-            color: #888; 
-            transition: color 0.1s;
-        }
-        .icon-item:hover > div { color: var(--cv-red); }
-        
-        .icon-active { font-weight: bold; color: var(--cv-red); }
-        .icon-active > div { border-bottom: 3px solid var(--cv-red); padding-bottom: 2px; color: var(--cv-red); }
+        .header-info { background-color: var(--cv-yellow); color: #333; padding: 5px 20px; font-size: 0.9em; }
 
-        /* CONTENUTO PRINCIPALE E FILTRI */
-        .content { padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .main-info { text-align: center; font-size: 1.3em; font-weight: normal; margin: 20px 0; padding: 10px; background-color: #e9e9e9; border-radius: 4px; border-left: 5px solid var(--cv-red); }
-        .main-info strong { color: var(--cv-red); font-weight: bold; }
-        
-        .class-links { text-align: center; margin-bottom: 20px; }
-        .class-links a { margin: 0 8px; padding: 5px 0; text-decoration: none; color: #007bff; font-weight: normal; transition: color 0.1s, border-bottom 0.1s; }
-        .class-links a:hover { color: var(--cv-dark-red); }
-        .class-links a.active-class { color: var(--cv-red); font-weight: bold; border-bottom: 3px solid var(--cv-red); }
-        
-        .filter-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: flex-start; 
-            margin-bottom: 15px; 
-            font-size: 0.9em; 
-            flex-wrap: wrap; 
-        }
-        .filter-links a { margin-right: 10px; text-decoration: none; color: #007bff; }
+        /* NAVIGAZIONE ICONE RAPIDE */
+        .quick-links { text-align: center; padding: 15px 0; border-bottom: 1px solid #ddd; background-color: white; }
+        .quick-link { display: inline-block; margin: 0 15px; text-decoration: none; color: #555; font-size: 0.8em; }
+        .quick-link span { display: block; font-size: 24px; margin-bottom: 5px; }
+        .quick-link.active { border-bottom: 2px solid var(--cv-red); color: var(--cv-red); font-weight: bold; }
 
-        .appello-buttons {
-            margin-top: 15px; 
-            border-top: 1px solid #ddd; 
-            padding-top: 10px;
+        /* CONTENUTO PRINCIPALE (Registro e Controlli) */
+        .container {
+            padding: 10px 20px;
+            max-width: 1500px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
         }
-        .appello-buttons button {
-            border: none;
-            padding: 8px 15px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: bold;
-            transition: opacity 0.1s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            margin-right: 10px; 
-        }
-        .appello-buttons button:nth-child(1) { background-color: var(--cv-green); color: white; }
-        .appello-buttons button:nth-child(2) { background-color: var(--cv-red); color: white; }
-        .appello-buttons button:nth-child(3) { background-color: #6c757d; color: white; }
 
-        /* --- STILI CALENDARIO LATERALE --- */
-        .calendar-container {
-            border: 1px solid #ddd;
-            padding: 10px;
+        .registro-wrapper {
+            flex-grow: 1;
             background-color: white;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            width: 180px; 
+            border: 1px solid #ccc;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            min-width: 0;
         }
-        .calendar-header {
+
+        /* BARRA DI CONTROLLO SUPERIORE */
+        .class-header {
+            text-align: center;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            background-color: #fcfcfc;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        /* FILTRI E PULSANTI */
+        .filters {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9em;
+            background-color: white;
+            position: sticky;
+            top: 60px; /* Sotto l'header di classe */
+            z-index: 90;
+        }
+        
+        /* STRUTTURA PRINCIPALE (Alunni + Registro) */
+        .main-grid {
+            display: flex;
+            position: relative;
+        }
+        
+        /* COLONNA ALUNNI */
+        .alunni-col {
+            width: 300px;
+            border-right: 1px solid #ccc;
+            overflow-y: scroll;
+            flex-shrink: 0;
+            background-color: #fcfcfc;
+            /* Calcola altezza in base agli altri elementi fissi */
+            max-height: calc(100vh - 200px); 
+        }
+        
+        /* Contenitore per allineare l'header alunni con l'header della tabella */
+        .alunni-fixed-header-container {
+            position: sticky;
+            top: 0;
+            z-index: 30; /* Deve stare sopra l'header del registro */
+            background-color: white;
+            border-bottom: 1px solid #ccc;
+        }
+        .alunni-header {
+            padding: 10px;
+            font-weight: bold;
+            background-color: var(--cv-gray);
+            border-bottom: 1px solid #ccc;
+            height: var(--row-height); 
+            line-height: calc(var(--row-height) - 20px); 
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+        
+        /* Riga Lezioni Fissa */
+        .lezioni-row-alunni {
+            height: var(--row-height); 
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .alunno-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            font-weight: bold;
-            font-size: 0.8em;
+            padding: 8px 10px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.9em;
+            height: var(--row-height);
+            box-sizing: border-box;
+        }
+        
+        /* TABELLA REGISTRO */
+        .registro-col {
+            flex-grow: 1;
+            overflow: auto;
+        }
+        .registro-table {
+            width: 100%;
+            border-collapse: collapse;
+            position: relative; /* Base per gli sticky */
+        }
+        
+        /* Intestazione delle Ore (1 ora, 2 ora, ecc.) - Fissa */
+        .registro-table thead tr th {
+            position: sticky;
+            top: 0; 
+            z-index: 20;
+            background-color: var(--cv-gray);
             color: var(--cv-dark-red);
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-        .calendar-header a {
-            text-decoration: none;
-            color: #333;
-            font-size: 1.2em;
-            padding: 2px 5px;
-            transition: color 0.1s;
-        }
-        .calendar-header a:hover {
-            color: var(--cv-red);
-        }
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
-            text-align: center;
-        }
-        .calendar-day-name {
-            font-size: 0.7em;
+            font-size: 0.85em;
             font-weight: bold;
-            color: #777;
-            padding: 2px 0;
-        }
-        .calendar-day-number {
-            font-size: 0.8em;
-            padding: 3px 0;
-            cursor: pointer;
-            border-radius: 2px;
-            transition: background-color 0.1s, color 0.1s;
-        }
-        .calendar-day-number:hover {
-            background-color: #f0f0f0;
-        }
-        .calendar-day-active {
-            background-color: var(--cv-red);
-            color: white;
-            font-weight: bold;
-        }
-        .calendar-day-empty {
-            cursor: default;
-            background-color: transparent;
-        }
-
-        /* --- LAYOUT CRITICO: GRID, ALTEZZA FISSA E ESPANSIONE FINALE --- */
-        
-        /* 1. CONTENITORE PRINCIPALE: GRIGLIA */
-        .table-container { 
-            display: grid; 
-            grid-template-columns: 350px 1fr; 
-            background-color: white; 
-            border: 1px solid #ccc; 
-            position: relative; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            min-height: 50vh; 
+            border: 1px solid #ccc;
+            height: var(--row-height);
+            line-height: var(--row-height);
+            padding: 0 8px;
         }
         
-        /* 2. COLONNE - DEVONO ESSERE FLEX COLUMN */
-        .student-list { 
-            border-right: 2px solid #ddd; 
-            background-color: #fcfcfc;
-            display: flex;
-            flex-direction: column; 
-        }
-        
-        .lessons-area { 
-            display: flex;              
-            flex-direction: column;     
-            overflow-x: auto; 
-        }
-
-        /* 3. HEADERS FISSI */
-        .student-header, .grid-header { 
-            padding: 10px; 
-            font-weight: bold; 
-            font-size: 0.9em; 
-            border-bottom: 1px solid #ccc; 
-            background-color: #e9e9e9; 
-            flex-shrink: 0; 
-        }
-        .grid-header { display: flex; }
-        .lessons-header-content { display: flex; min-width: 500px; flex-grow: 1; }
-        
-        /* 4. CORPI (RIGHE) - DEVONO ESPANDERE */
-        #student-names {
-            flex-grow: 1; 
-            position: relative;
-            display: flex; 
-            flex-direction: column;
-            justify-content: flex-start; 
-        }
-        
-        #attendance-rows-wrapper {
-            flex-grow: 1; 
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-
-        /* 5. RIGHE E CELLE (FORZATAMENTE ALTEZZA FISSA) */
-
-        .student-row { 
-            display: flex; 
-            align-items: center; 
-            border-bottom: 1px solid #eee; 
-            transition: background-color 0.1s;
-            height: 48px; /* ALTEZZA FISSA CRITICA */
-            flex-shrink: 0; 
-        }
-        .student-row:hover { background-color: #f9f9f9; }
-
-        .attendance-row { 
-            display: flex; 
-            min-width: 500px; 
-            border-bottom: 1px solid #eee;
-            height: 48px; /* ALTEZZA FISSA CRITICA */
-            flex-shrink: 0; 
-        }
-        
-        /* 6. RIEMPIMENTO DELLO SPAZIO INFERIORE (Spacer CSS) */
-        
-        /* Riempie lo spazio bianco sotto l'ultima riga dei nomi */
-        #student-names::after {
-            content: "";
-            flex-grow: 1; 
-            display: block;
-            background-color: #fcfcfc;
-        }
-        
-        /* Riempie lo spazio bianco sotto l'ultima riga delle presenze */
-        #attendance-rows-wrapper::after {
-            content: "";
-            flex-grow: 1; 
-            display: block;
+        /* Riga "Lezioni" subito sotto l'header delle ore - Fissa */
+        #row-lezioni {
+            position: sticky;
+            top: var(--row-height); /* Sotto l'header delle ore (40px) */
+            z-index: 15;
             background-color: white;
-            min-width: 500px;
-            border-top: 1px solid #eee; 
-        }
-        
-        /* --- RESTO DEL CSS --- */
-        .lesson-header-cell { 
-            flex-basis: 14.28%; 
-            max-width: 100px; 
-            min-width: 70px; 
-            text-align: center; 
-            padding: 5px 0; 
-            font-size: 0.8em; 
-            border-left: 1px solid #ddd; 
-            color: var(--cv-dark-red);
         }
 
-        .student-index { 
-            width: 30px; 
-            text-align: center; 
-            font-size: 0.7em; 
-            color: #777; 
-            padding: 8px 0; 
+        /* Fissa la colonna "Giornale del professore" (prima colonna) */
+        .registro-table th:first-child, 
+        .registro-table td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 25; /* Più alto per coprire lo scroll orizzontale */
+            background-color: var(--cv-gray);
+            border-right: 1px solid #ccc;
         }
-        .student-name-cell { 
-            flex-grow: 1; 
-            font-weight: bold; 
-            font-size: 0.9em; 
-            padding: 8px 5px; 
-            position: relative; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
-        .student-birthdate { 
-            font-size: 0.7em; 
-            font-weight: normal; 
-            display: block; 
-            color: #777; 
-            margin-top: 2px; 
-        }
-        .dots-button { 
-            background: none; 
-            border: none; 
-            font-size: 1.5em; 
-            cursor: pointer; 
-            color: #aaa; 
-            padding: 0 5px; 
-            line-height: 1; 
-            vertical-align: middle; 
-            margin-left: 5px; 
-            transition: color 0.1s;
+        #row-lezioni td:first-child {
+            z-index: 17; /* Sotto l'angolo fisso */
+            background-color: #f8f8f8;
+            font-weight: bold;
         }
 
-        .lesson-action-cell { 
-            flex-basis: 14.28%; 
-            max-width: 100px; 
-            min-width: 70px; 
-            text-align: center; 
-            padding: 10px 0; 
-            font-size: 0.9em; 
-            border-left: 1px solid #eee; 
-            color: #aaa; 
-            font-weight: normal; 
-            cursor: pointer; 
-            background-color: white; 
-            border-right: 1px solid #eee; 
-            text-transform: uppercase;
-            transition: background-color 0.1s, color 0.1s;
-        }
-        .lesson-action-cell:not([style]):hover { 
-            background-color: #fefefe; 
-            color: var(--cv-red); 
-            font-weight: bold; 
-        }
-        .lessons-area .lesson-action-cell.active { 
-            background-color: #f5f5f5 !important; 
-            border: 1px dashed var(--cv-red) !important; 
-            color: #333 !important; 
-            font-weight: bold; 
+
+        .registro-table td {
+            border: 1px solid #ccc;
+            padding: 0;
+            min-width: 100px;
+            text-align: center;
+            height: var(--row-height);
+            box-sizing: border-box;
         }
         
-        /* Menu Contesto */
-        .context-menu { 
-            position: fixed; 
-            background: white; 
-            border: 1px solid #ccc; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
-            z-index: 1000; 
-            min-width: 160px; 
-            display: none; 
-            border-radius: 4px;
-            overflow: hidden;
+        /* CELLE APPELLO (P, A) */
+        .appello-cell {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            line-height: var(--row-height); 
         }
-        .context-menu a { 
-            display: block; 
-            padding: 8px 12px; 
-            text-decoration: none; 
-            color: #333; 
-            font-size: 0.9em; 
-            transition: background-color 0.1s;
-        }
-        .context-menu a.action-presente { color: white; background-color: var(--cv-green); font-weight: bold;}
-        .context-menu a.action-assente { color: white; background-color: var(--cv-red); font-weight: bold;}
-        .context-menu a.action-ritardo { color: #333; background-color: var(--cv-yellow); font-weight: bold;}
+        .appello-cell.presente { background-color: #e6ffe6; color: var(--cv-green); }
+        .appello-cell.assente { background-color: var(--cv-light-red); color: var(--cv-red); }
         
     </style>
 </head>
-<body onclick="closeContextMenu()">
+<body>
 
-    <div class="header">
-        <a href="dashboard.html" class="header-title">CLASSEVIVA</a>
+    <div class="header-top">
+        <span class="header-title">CLASSEVIVA</span>
         <span class="header-center">Registro di classe</span>
         <div class="user-icon">👤</div>
     </div>
     
-    <div class="last-access-bar">
-        Ultimo accesso: 02-12 ora 16:51 (Simulazione)
-    </div>
+    <div class="header-info">Ultimo accesso: 03/12 ore 16:00 (Simulazione)</div>
 
-    <div class="menu-nav-container">
-        <div class="menu-nav">
+    <div class="menu-nav">
             <a href="registro_classe.html" class="icon-item icon-active"><div class="i-appello">📖</div>Appello</a>
             <a href="comunicazioni.html" class="icon-item"><div class="i-comunicazioni">📢</div>Comunicazioni</a>
             <a href="agenda_oggi.html" class="icon-item"><div class="i-agenda">📅</div>Agenda di oggi</a>
@@ -365,632 +222,274 @@
             <a href="mie_classi.html" class="icon-item" id="classi-link"><div class="i-classi">🏫</div>Le mie classi</a>
             <a href="gruppi.html" class="icon-item"><div class="i-tutti">🌐</div>Tutti i gruppi</a>
         </div>
-    </div>
 
-    <div class="content">
-        <div class="main-info">
-            Registro di classe di <strong id="class-detail"></strong> del giorno <strong id="day-detail"></strong>
-        </div>
-        
-        <div class="class-links">
-            <a href="#" data-class="1A">1A</a>
-            <a href="#" data-class="2A">2A</a>
-            <a href="#" data-class="3A">3A</a>
-            <a href="#" data-class="4A">4A</a>
-            <a href="#" data-class="5A">5A</a>
-        </div>
-
-        <div class="filter-row">
-            <div class="filter-links">
-                <span style="font-weight: bold;">Filtra per iniziale: </span>
-                <a href="#">B</a> <a href="#">C</a> <a href="#">D</a> <a href="#">G</a> <a href="#">M</a> 
-                <a href="#">P</a> <a href="#">R</a> <a href="#">S</a> <a href="#">T</a> <a href="#">V</a> 
-                <a href="#">Tutti</a>
-                
-                <span style="margin-left: 20px;">Seleziona: <a href="#">tutti</a> <a href="#">nessuno</a> <a href="#">sottogruppo</a></span>
-                
-                <div class="appello-buttons">
-                    <button onclick="applyAllStudentsAction('P', event)">Appello: Tutti Presenti</button>
-                    <button onclick="applyAllStudentsAction('A', event)">Appello: Tutti Assenti</button>
-                    <button onclick="clearAllAttendanceForDay()">Cancella Tutte le Presenze</button>
-                </div>
-                
-                <div style="margin-top: 15px;">
-                    <span style="opacity: 0.7;">lezione </span>
-                    <span id="current-date"></span>
+    <div class="container">
+        <div class="registro-wrapper">
+            <div class="class-header">
+                <h2>Registro di classe di <span style="color: var(--cv-red);">1A</span> del giorno</h2>
+                <div class="class-selector">
+                    <a href="#" class="active">1A</a>
+                    <a href="#">2A</a>
+                    <a href="#">3A</a>
                 </div>
             </div>
-            
-            <div class="calendar-container">
-                <div class="calendar-header">
-                    <div style="display: flex; align-items: center;">
-                        <a href="#" id="prev-year-link" onclick="changeYear(-1); return false;" style="font-size: 0.9em;">«</a>
-                        <a href="#" id="prev-month-link" onclick="changeMonth(-1); return false;">‹</a>
-                    </div>
-                    
-                    <span id="calendar-month-year">DICEMBRE 2025</span>
-                    
-                    <div style="display: flex; align-items: center;">
-                        <a href="#" id="next-month-link" onclick="changeMonth(1); return false;">›</a>
-                        <a href="#" id="next-year-link" onclick="changeYear(1); return false;" style="font-size: 0.9em;">»</a>
-                    </div>
-                </div>
-                <div class="calendar-grid" id="calendar-grid">
-                    </div>
-            </div>
-        </div>
 
-        <div class="table-container">
-            <div class="student-list">
-                <div class="student-header">
-                    Alunni
+            <div class="filters">
+                <div style="margin-bottom: 10px;">
+                    Filtra per iniziale: <a href="#">B</a> ... <a href="#" style="font-weight: bold;">Tutti</a>
+                    <span style="margin-left: 20px;"></span>
+                    Seleziona: <a href="#" style="font-weight: bold;">tutti</a> <a href="#">nessuno</a> <a href="#">sottogruppo</a>
                 </div>
-                <div id="student-names">
-                    </div>
+                <div class="filter-buttons">
+                    <button id="btn-tutti-presenti" onclick="setAllPresences('presente')">Appello: Tutti Presenti</button>
+                    <button id="btn-tutti-assenti" onclick="setAllPresences('assente')">Appello: Tutti Assenti</button>
+                    <button id="btn-cancella-presenze" onclick="setAllPresences('vuoto')">Cancella Tutte le Presenze</button>
+                </div>
+                <p style="font-size: 0.9em; margin-top: 10px; color: #555;">lezione MARTEDÌ 02 DICEMBRE 2025</p>
             </div>
 
-            <div class="lessons-area">
-                <div class="grid-header">
-                    <div style="width: 100px; text-align: center; font-size: 0.8em; padding: 5px 0; border-right: 1px solid #ccc;">
-                        Giornale del professore
-                    </div>
-                    <div class="lessons-header-content">
-                        <div class="lesson-header-cell">1 ora</div>
-                        <div class="lesson-header-cell">2 ora</div>
-                        <div class="lesson-header-cell">3 ora</div>
-                        <div class="lesson-header-cell">4 ora</div>
-                        <div class="lesson-header-cell">5 ora</div>
-                        <div class="lesson-header-cell">6 ora</div>
-                        <div class="lesson-header-cell">7 ora</div>
-                    </div>
-                </div>
-
-                <div class="grid-header" style="background-color: white; border-bottom: 2px solid #ccc; font-weight: normal;">
-                    <div style="width: 100px; text-align: center; font-size: 0.8em; padding: 5px 0; border-right: 1px solid #ccc; color: #333;">
-                        Lezioni
-                    </div>
-                    <div class="lessons-header-content">
-                        <div class="lesson-action-cell active">Lezione</div>
-                        <div class="lesson-action-cell">Lezione</div>
-                        <div class="lesson-action-cell">Lezione</div>
-                        <div class="lesson-action-cell">Lezione</div>
-                        <div class="lesson-action-cell">Lezione</div>
-                        <div class="lesson-action-cell">Lezione</div>
-                        <div class="lesson-action-cell">Lezione</div>
-                    </div>
-                </div>
+            <div class="main-grid">
                 
-                <div id="attendance-rows-wrapper">
-                    <div id="attendance-body">
+                <div class="alunni-col">
+                    <div class="alunni-fixed-header-container">
+                        <div class="alunni-header" style="background-color: var(--cv-gray); height: 41px;">
+                            Alunni
+                        </div>
+                        <div class="lezioni-row-alunni">
+                            </div>
+                    </div>
+
+                    <div id="alunni-list">
                         </div>
                 </div>
+
+                <div class="registro-col">
+                    <table class="registro-table">
+                        <thead>
+                            <tr>
+                                <th style="min-width: 120px; font-weight: normal; padding: 0 10px; text-align: left;">Giornale del professore</th>
+                                <th>1 ora</th>
+                                <th>2 ora</th>
+                                <th>3 ora</th>
+                                <th>4 ora</th>
+                                <th>5 ora</th>
+                                <th>6 ora</th>
+                                <th>7 ora</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registro-body">
+                            <tr id="row-lezioni">
+                                <td style="text-align: left; padding-left: 10px;">Lezioni</td>
+                                <td class="lezione-cell"><button class="lezione-btn lezione-attiva">LEZIONE</button></td>
+                                <td class="lezione-cell"><button class="lezione-btn lezione-attiva">LEZIONE</button></td>
+                                <td class="lezione-cell"><button class="lezione-btn">LEZIONE</button></td>
+                                <td class="lezione-cell"><button class="lezione-btn">LEZIONE</button></td>
+                                <td class="lezione-cell"><button class="lezione-btn">LEZIONE</button></td>
+                                <td class="lezione-cell"><button class="lezione-btn">LEZIONE</button></td>
+                                <td class="lezione-cell"><button class="lezione-btn">LEZIONE</button></td>
+                            </tr>
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        
+
+        <div class="sidebar-calendar">
+             </div>
     </div>
 
-    <div id="context-menu" class="context-menu">
-        <a href="#" class="action-presente" data-action="P">Presente (PL)</a>
-        <a href="#" class="action-assente" data-action="A">Assente (AL)</a>
-        <a href="#" class="action-ritardo" data-action="R">Ritardo (R)</a>
-        <a href="#" data-action="N">Nota</a>
-        <a href="#" data-action="V">Voto</a>
-        <a href="#" data-action="US">Uscita Anticipata (US)</a> 
-        <a href="#" class="action-cancella" data-action="C">Cancella</a> 
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2>Conferma Operazione</h2>
+            <p>Stai per eseguire un'azione. Vuoi procedere?</p>
+            <button class="confirm-btn" onclick="executeAction()">Conferma</button>
+            <button class="cancel-btn" onclick="closeModal('confirmModal')">Annulla</button>
+        </div>
     </div>
 
     <script>
-        // --- CHIAVI PER IL SALVATAGGIO LOCALE (LOCALSTORAGE) ---
-        const ATTENDANCE_KEY_PREFIX = 'cv_attendance_';
-        const CURRENT_DATE_KEY_PREFIX = 'cv_date_';
-        const CURRENT_CLASS_KEY = 'cv_current_class'; 
-
-        // Dati degli alunni (Classe 1A-5A)
-        const studentData = {
-            '1A': [
-                { id: 1, name: 'STELLINA DEMATTEIS', date: '01-01-2007' },
-                { id: 2, name: 'PANDINO DEMATTEIS', date: '02-01-2007' },
-                { id: 3, name: 'TARTARUGA BENUA', date: '03-01-2007' },
-                { id: 4, name: 'YUCKY BENUA', date: '04-01-2007' },
-                { id: 5, name: 'LOLLO BENUA', date: '05-01-2007' },
-                { id: 6, name: 'BRICIOLA DEMATTEIS', date: '06-01-2007' },
-                { id: 7, name: 'FLUFFY DEMATTEIS', date: '07-01-2007' },
-                { id: 8, name: 'TINA DEMATTEIS', date: '08-01-2007' },
-                { id: 9, name: 'GRIGETTA BENUA', date: '09-01-2007' },
-                { id: 10, name: 'LUNA DEMATTEIS', date: '10-01-2007' },
-                { id: 11, name: 'LUNA BENUA', date: '11-01-2007' },
-                { id: 12, name: 'KENDY DEMATTEIS', date: '12-01-2007' },
-                { id: 13, name: 'PAPERO DEMATTEIS', date: '13-01-2007' },
-                { id: 14, name: 'ATTIGLIO DEMATTEIS', date: '14-01-2007' },
-                { id: 15, name: 'SUNNY BENUA', date: '15-01-2007' },
-                { id: 16, name: 'CURT DEMATTEIS', date: '16-01-2007' },
-                { id: 17, name: 'BUNNY BENUA', date: '17-01-2007' }
-            ],
-            '2A': [
-                { id: 18, name: 'CANE DEMATTEIS', date: '01-02-2006' },
-                { id: 19, name: 'CANE BENUA', date: '02-02-2006' },
-                { id: 20, name: 'MICIAN DEMATTEIS', date: '03-02-2006' },
-                { id: 21, name: 'CICCIOBELLO TEMPERINI', date: '04-02-2006' },
-                { id: 22, name: 'MAICOL CAROTINI', date: '05-02-2006' },
-                { id: 23, name: 'CATTIVO TEMPERINI', date: '06-02-2006' },
-                { id: 24, name: 'BAMBOLA CAROTINI', date: '07-02-2006' },
-                { id: 25, name: 'ROBOTTINA ROSSETTI', date: '08-02-2006' }
-            ],
-            '3A': [
-                { id: 26, name: 'ALPHA SCARLETTI', date: '01-03-2005' },
-                { id: 27, name: 'BRAVO BIANCHI', date: '02-03-2005' },
-                { id: 28, name: 'CHARLIE NERI', date: '03-03-2005' },
-                { id: 29, name: 'DELTA ROSSI', date: '04-03-2005' },
-                { id: 30, name: 'ECHO VERDI', date: '05-03-2005' },
-                { id: 31, name: 'FOXTROT GIALLI', date: '06-03-2005' }
-            ],
-            '4A': [
-                { id: 32, name: 'GOLF GRIGI', date: '01-04-2004' },
-                { id: 33, name: 'HOTEL VIOLA', date: '02-04-2004' },
-                { id: 34, name: 'INDIA BLU', date: '03-04-2004' },
-                { id: 35, name: 'JULIET MARRONI', date: '04-04-2004' },
-                { id: 36, name: 'KILO ARANCIO', date: '05-04-2004' }
-            ],
-            '5A': [
-                { id: 37, name: 'LIMA ROSA', date: '01-05-2003' },
-                { id: 38, name: 'MIKE AZZURRO', date: '02-05-2003' },
-                { id: 39, name: 'NOVEMBER BEIGE', date: '03-05-2003' },
-                { id: 40, name: 'OSCAR CREMA', date: '04-05-2003' }
-            ]
-        };
+        // Dati degli Alunni (estesi come da screenshot)
+        const students = [
+            { id: 1, name: 'STELLINA DEMATTEIS', dob: '(01-01-2007)' },
+            { id: 2, name: 'PANDINO DEMATTEIS', dob: '(02-01-2007)' },
+            { id: 3, name: 'TARTARUGA BENUA', dob: '(03-01-2007)' },
+            { id: 4, name: 'YUCKY BENUA', dob: '(04-01-2007)' },
+            { id: 5, name: 'LOLLO BENUA', dob: '(05-01-2007)' },
+            { id: 6, name: 'BRICIOLA DEMATTEIS', dob: '(06-01-2007)' },
+            { id: 7, name: 'FLUFFY DEMATTEIS', dob: '(07-01-2007)' },
+            { id: 8, name: 'TINA DEMATTEIS', dob: '(08-01-2007)' },
+            { id: 9, name: 'GRIGETTA BENUA', dob: '(09-01-2007)' },
+            { id: 10, name: 'LUNA DEMATTEIS', dob: '(10-01-2007)' },
+            { id: 11, name: 'LUNA BENUA', dob: '(11-01-2007)' },
+            { id: 12, name: 'KENDY DEMATTEIS', dob: '(12-01-2007)' },
+            { id: 13, name: 'PAPERO DEMATTEIS', dob: '(13-01-2007)' },
+            { id: 14, name: 'ATTIGLIO DEMATTEIS', dob: '(14-01-2007)' },
+            { id: 15, name: 'SUNNY BENUA', dob: '(15-01-2007)' },
+            { id: 16, name: 'CURT DEMATTEIS', dob: '(16-01-2007)' },
+            { id: 17, name: 'BUNNY BENUA', dob: '(17-01-2007)' },
+        ];
         
-        // Variabili globali
-        let attendanceStatus = {}; 
-        let currentDate; 
-        let classKey = '1A'; 
+        // Stato appello (simulazione: salviamo lo stato nel browser)
+        const APPELLO_STORAGE_KEY = 'cv_appello_state';
 
-        // --- GESTIONE CLASSE ---
-        function getClasseFromStorageOrUrl() {
-            const classFromStorage = localStorage.getItem(CURRENT_CLASS_KEY);
-            let selectedClass = classFromStorage || '1A';
-
-            if (!studentData[selectedClass]) {
-                selectedClass = '1A';
-            }
-
-            classKey = selectedClass;
-            localStorage.setItem(CURRENT_CLASS_KEY, classKey);
-            document.getElementById('class-detail').textContent = classKey;
-            
-            // Aggiorna lo stato attivo nei link
-            document.querySelectorAll('.class-links a').forEach(link => {
-                link.classList.remove('active-class');
-                if (link.getAttribute('data-class') === classKey) {
-                    link.classList.add('active-class');
-                }
-            });
-        }
-        
-        // Listener per i link delle classi
-        document.querySelectorAll('.class-links a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                classKey = this.getAttribute('data-class');
-                localStorage.setItem(CURRENT_CLASS_KEY, classKey);
-                init(); // Ricarica tutto per la nuova classe
-            });
-        });
-
-        // --- GESTIONE SALVATAGGIO DATI (LocalStorage) ---
-        function saveData() {
-            if (!classKey) return;
-            localStorage.setItem(ATTENDANCE_KEY_PREFIX + classKey, JSON.stringify(attendanceStatus));
-            localStorage.setItem(CURRENT_DATE_KEY_PREFIX + classKey, currentDate.toISOString());
+        let appelloState = JSON.parse(localStorage.getItem(APPELLO_STORAGE_KEY));
+        if (!appelloState) {
+            appelloState = initializeAppelloState();
+            saveAppelloState();
         }
 
-        function loadData() {
-            if (!classKey) return;
-
-            const storedAttendance = localStorage.getItem(ATTENDANCE_KEY_PREFIX + classKey);
-            if (storedAttendance) {
-                attendanceStatus = JSON.parse(storedAttendance);
-            } else {
-                attendanceStatus = {};
-            }
-
-            const storedDate = localStorage.getItem(CURRENT_DATE_KEY_PREFIX + classKey);
-            if (storedDate) {
-                currentDate = new Date(storedDate);
-            } else {
-                // Imposta la data iniziale a oggi (o una data arbitraria se preferisci la simulazione)
-                currentDate = new Date(); 
-            }
-            
-            currentDate.setHours(0, 0, 0, 0); 
-        }
-        
-        function getCellStyle(code) {
-            switch (code) {
-                case 'PL': 
-                case 'P': 
-                    return 'background-color: #d4edda; color: #155724; font-weight: bold;'; 
-                case 'AL': 
-                case 'A':
-                    return 'background-color: #f8d7da; color: #721c24; font-weight: bold;'; 
-                case 'R':
-                    return 'background-color: #fff3cd; color: #856404; font-weight: bold;'; 
-                case 'US':
-                    return 'background-color: #ffe5b4; color: #9c6800; font-weight: bold;'; 
-                case 'NOTA':
-                    return 'background-color: #cce5ff; color: #004085; font-weight: bold;'; 
-                case 'VOTO':
-                    return 'background-color: #dae8f5; color: #215e98; font-weight: bold;'; 
-                default:
-                    return ''; 
-            }
-        }
-
-        // --- LOGICA DI RENDER DEL CALENDARIO E CAMBIO DATA ---
-        function renderCalendar() {
-            const grid = document.getElementById('calendar-grid');
-            const monthYearDisplay = document.getElementById('calendar-month-year');
-            const dateDisplay = document.getElementById('current-date');
-            
-            const monthName = currentDate.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }).toUpperCase();
-            monthYearDisplay.textContent = monthName;
-
-            const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
-            const formattedDate = currentDate.toLocaleDateString('it-IT', options).toUpperCase();
-            const parts = formattedDate.split(',');
-            const dayOfWeek = parts.length > 1 ? parts[0].trim() : '';
-            const dateOnly = parts.length > 1 ? parts[1].trim() : formattedDate.trim();
-            
-            dateDisplay.textContent = dateOnly;
-            document.getElementById('day-detail').textContent = dayOfWeek;
-            
-            grid.innerHTML = `
-                <div class="calendar-day-name">L</div>
-                <div class="calendar-day-name">M</div>
-                <div class="calendar-day-name">M</div>
-                <div class="calendar-day-name">G</div>
-                <div class="calendar-day-name">V</div>
-                <div class="calendar-day-name">S</div>
-                <div class="calendar-day-name">D</div>
-            `; 
-
-            const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-            let startDay = firstDayOfMonth.getDay();
-            if (startDay === 0) startDay = 7; // Domenica è 0, vogliamo che sia 7 (ultima colonna)
-            startDay = startDay - 1; // 0=lun, 1=mar, ... 6=dom
-
-            const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-
-            // Giorni vuoti (filler)
-            for (let i = 0; i < startDay; i++) {
-                grid.innerHTML += `<div class="calendar-day-number calendar-day-empty"></div>`;
-            }
-
-            const currentDay = currentDate.getDate();
-            const currentMonth = currentDate.getMonth();
-            const currentYear = currentDate.getFullYear();
-            
-            // Giorni del mese
-            for (let day = 1; day <= daysInMonth; day++) {
-                let classActive = '';
-                if (day === currentDay && currentMonth === firstDayOfMonth.getMonth() && currentYear === firstDayOfMonth.getFullYear()) {
-                    classActive = 'calendar-day-active';
-                }
-
-                grid.innerHTML += `<div class="calendar-day-number ${classActive}" data-day="${day}">${day}</div>`;
-            }
-
-            // Listener per il click sui giorni
-            document.querySelectorAll('.calendar-day-number:not(.calendar-day-empty)').forEach(dayElement => {
-                dayElement.addEventListener('click', function() {
-                    const newDay = parseInt(this.getAttribute('data-day'));
-                    currentDate.setDate(newDay); 
-                    
-                    renderCalendar(); 
-                    renderAttendance(); 
-                    saveData();
-                });
-            });
-
-            renderAttendance();
-            saveData();
-        }
-
-        function changeMonth(offset) {
-            const currentDayOfMonth = currentDate.getDate();
-            currentDate.setMonth(currentDate.getMonth() + offset); 
-            
-            // Gestisce mesi con numero diverso di giorni (es. da 31 a 30)
-            const newDaysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-            const dayToSet = Math.min(currentDayOfMonth, newDaysInMonth);
-            currentDate.setDate(dayToSet);
-            
-            renderCalendar();
-        }
-        
-        function changeYear(offset) {
-            currentDate.setFullYear(currentDate.getFullYear() + offset);
-            renderCalendar();
-            saveData();
-        }
-
-        // --- LOGICA PRESENZE/ASSENZE ---
-
-        function applyAllStudentsAction(action, e) {
-            e.preventDefault();
-            closeContextMenu();
-            
-            if (!['P', 'A'].includes(action)) return; 
-
-            const confirmationMessage = (action === 'P')
-                ? `Sei sicuro di voler segnare TUTTI gli studenti della classe ${classKey} come PRESENTI per l'intera giornata? Questa azione SOVRASCRIVERÀ ogni stato già inserito.`
-                : `Sei sicuro di voler segnare TUTTI gli studenti della classe ${classKey} come ASSENTI per l'intera giornata? Questa azione SOVRASCRIVERÀ ogni stato già inserito.`;
-            
-            if (!confirm(confirmationMessage)) {
-                return;
-            }
-
-            const students = studentData[classKey];
-            const formattedDate = currentDate.toISOString().split('T')[0];
-            const totalHours = 7;
-            
+        function initializeAppelloState() {
+            const state = {};
             students.forEach(student => {
-                const studentAttendanceKey = `${student.id}_${formattedDate}`;
-                attendanceStatus[studentAttendanceKey] = {};
-                
-                for (let i = 1; i <= totalHours; i++) {
-                    attendanceStatus[studentAttendanceKey][`ora${i}`] = action;
-                }
+                state[student.id] = { 
+                    1: 'presente', 
+                    2: 'presente', 
+                    3: 'vuoto', 
+                    4: 'vuoto', 
+                    5: 'vuoto', 
+                    6: 'vuoto', 
+                    7: 'vuoto' 
+                };
             });
-
-            saveData(); 
-            renderAttendance(); 
+            return state;
         }
 
-        function clearAllAttendanceForDay() {
-            closeContextMenu();
-            
-            const confirmationMessage = `Sei sicuro di voler CANCELLARE TUTTE le presenze, assenze, ritardi, note e voti per la classe ${classKey} in data ${currentDate.toLocaleDateString('it-IT')}?`;
-            
-            if (!confirm(confirmationMessage)) {
-                return;
-            }
-
-            const students = studentData[classKey];
-            const formattedDate = currentDate.toISOString().split('T')[0];
-            
-            students.forEach(student => {
-                const studentAttendanceKey = `${student.id}_${formattedDate}`;
-                attendanceStatus[studentAttendanceKey] = {};
-            });
-
-            saveData(); 
-            renderAttendance(); 
+        function saveAppelloState() {
+            localStorage.setItem(APPELLO_STORAGE_KEY, JSON.stringify(appelloState));
         }
 
-
-        function generateEmptyActionRows(classKey) {
-            const students = studentData[classKey];
-            const formattedDate = currentDate.toISOString().split('T')[0];
-            const totalHours = 7; 
-
-            students.forEach(student => {
-                const studentAttendanceKey = `${student.id}_${formattedDate}`;
-
-                if (!attendanceStatus[studentAttendanceKey]) {
-                    attendanceStatus[studentAttendanceKey] = {};
-                }
-                for (let i = 1; i <= totalHours; i++) {
-                    if (attendanceStatus[studentAttendanceKey][`ora${i}`] === undefined) {
-                         attendanceStatus[studentAttendanceKey][`ora${i}`] = ''; 
-                    }
-                }
-            });
+        function getCellStatus(studentId, hour) {
+            return appelloState[studentId] ? appelloState[studentId][hour] : 'vuoto';
         }
 
-        function renderStudentNames(classKey) {
-            const studentNamesContainer = document.getElementById('student-names');
-            studentNamesContainer.innerHTML = '';
+        // Funzione per generare le righe degli alunni e il registro
+        function renderStudentRows() {
+            const listContainer = document.getElementById('alunni-list');
+            const tableBody = document.getElementById('registro-body');
             
-            const students = studentData[classKey];
-            let studentHtml = '';
+            listContainer.innerHTML = '';
+            
+            // Rimuove solo le righe degli alunni (tutte tranne la riga "Lezioni")
+            const existingRows = tableBody.querySelectorAll('tr:not(#row-lezioni)');
+            existingRows.forEach(row => row.remove());
+
+            const alunniListFragment = document.createDocumentFragment();
 
             students.forEach((student, index) => {
-                studentHtml += `
-                    <div class="student-row">
-                        <div class="student-index">${index + 1}</div>
-                        <div class="student-name-cell">
-                            <span class="student-name">${student.name}</span>
-                            <span class="student-birthdate">(${student.date})</span>
-                            <button class="dots-button" data-student-id="${student.id}" onclick="openContextMenu(event, this)">...</button>
-                        </div>
+                // 1. Riga Alunno nella Colonna Fissa
+                const alunnoDiv = document.createElement('div');
+                alunnoDiv.className = 'alunno-row';
+                alunnoDiv.id = `alunno-row-${student.id}`; // Aggiunto ID per riferimento
+                alunnoDiv.innerHTML = `
+                    <span style="width: 20px;">${index + 1}</span>
+                    <div style="flex-grow: 1; text-align: left;">
+                        <span class="alunno-name">${student.name}</span>
+                        <span class="alunno-details">${student.dob}</span>
                     </div>
+                    <span class="alunno-menu">...</span>
                 `;
+                alunniListFragment.appendChild(alunnoDiv);
+
+                // 2. Riga nel Corpo della Tabella Registro
+                const registroRow = tableBody.insertRow(-1);
+                registroRow.id = `data-row-${student.id}`;
+                
+                // Cella vuota fissa Giornale del Professore
+                registroRow.insertCell(0).style.textAlign = 'left'; 
+
+                // Celle Appello (da 1 a 7 ora)
+                for (let h = 1; h <= 7; h++) {
+                    const cell = registroRow.insertCell(h);
+                    cell.className = 'appello-cell';
+                    cell.setAttribute('data-student-id', student.id);
+                    cell.setAttribute('data-hour', h);
+                    cell.onclick = function() { togglePresence(student.id, h, this); };
+
+                    updateCellAppearance(cell, getCellStatus(student.id, h));
+                }
             });
-            
-            studentNamesContainer.innerHTML = studentHtml;
+
+            listContainer.appendChild(alunniListFragment);
         }
 
-        function renderAttendance() {
-            const attendanceBodyContainer = document.getElementById('attendance-body');
-            attendanceBodyContainer.innerHTML = '';
+        // --- GESTIONE FUNZIONALITÀ APPELLO ---
+
+        function updateCellAppearance(cell, status) {
+            cell.textContent = '';
+            cell.className = 'appello-cell';
             
-            const students = studentData[classKey];
-            const formattedDate = currentDate.toISOString().split('T')[0];
-            const totalHours = 7;
-            let attendanceHtml = '';
+            if (status === 'presente') {
+                cell.classList.add('presente');
+                cell.textContent = 'P';
+            } else if (status === 'assente') {
+                cell.classList.add('assente');
+                cell.textContent = 'A';
+            }
+        }
 
-            generateEmptyActionRows(classKey);
+        function togglePresence(studentId, hour, cellElement) {
+            const currentStatus = getCellStatus(studentId, hour);
+            let newStatus;
+            
+            if (currentStatus === 'vuoto') {
+                newStatus = 'presente';
+            } else if (currentStatus === 'presente') {
+                newStatus = 'assente';
+            } else {
+                newStatus = 'vuoto';
+            }
 
+            appelloState[studentId][hour] = newStatus;
+            updateCellAppearance(cellElement, newStatus);
+            saveAppelloState();
+        }
+
+        function setAllPresences(status) {
+            const actionText = status === 'presente' ? 'Tutti Presenti' : (status === 'assente' ? 'Tutti Assenti' : 'Cancellazione Presenze');
+            if (!confirm(`Sei sicuro di voler impostare l'appello di TUTTI gli alunni su: ${actionText}?`)) {
+                return;
+            }
+            
             students.forEach(student => {
-                const studentAttendanceKey = `${student.id}_${formattedDate}`;
-                const studentStatus = attendanceStatus[studentAttendanceKey] || {};
-                
-                let rowHtml = `<div class="attendance-row">`;
-                
-                // Colonna "Giornale del professore" (status generale)
-                let generalStatus = studentStatus.ora1 || ''; // Esempio: usa lo stato della prima ora
-                let generalStyle = getCellStyle(generalStatus);
-                rowHtml += `<div class="lesson-action-cell" style="width: 100px; ${generalStyle}">${generalStatus || ''}</div>`; 
-
-                // Colonne ore
-                for (let i = 1; i <= totalHours; i++) {
-                    const status = studentStatus[`ora${i}`] || '';
-                    const displayCode = status; 
-                    const cellStyle = getCellStyle(status);
-
-                    rowHtml += `
-                        <div 
-                            class="lesson-action-cell" 
-                            style="${cellStyle}" 
-                            data-student-key="${studentAttendanceKey}"
-                            data-ora="${i}"
-                            onclick="openContextMenu(event, this)"
-                        >
-                            ${displayCode}
-                        </div>
-                    `;
+                for (let h = 1; h <= 7; h++) { 
+                    appelloState[student.id][h] = status;
                 }
-
-                rowHtml += `</div>`;
-                attendanceHtml += rowHtml;
             });
 
-            attendanceBodyContainer.innerHTML = attendanceHtml;
+            saveAppelloState();
+            renderStudentRows();
+        }
+
+        // --- GESTIONE MODALE (Centrato) ---
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex'; 
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
         
-        // --- LOGICA MENU CONTESTUALE ---
-        function closeContextMenu() {
-            document.getElementById('context-menu').style.display = 'none';
+        function executeAction() {
+            alert("Azione confermata!");
+            closeModal('confirmModal');
         }
 
-        function applySingleAction(studentAttendanceKey, hourIndex, action) {
-            if (!attendanceStatus[studentAttendanceKey]) return;
-
-            const hourKey = `ora${hourIndex}`;
-            
-            if (action === 'C') {
-                attendanceStatus[studentAttendanceKey][hourKey] = ''; 
-            } else if (['P', 'A', 'R', 'US'].includes(action)) {
-                attendanceStatus[studentAttendanceKey][hourKey] = action;
-            } else if (action === 'N') {
-                alert(`Inserisci Nota per l'alunno nell'ora ${hourIndex}.`);
-                attendanceStatus[studentAttendanceKey][hourKey] = 'NOTA'; 
-            } else if (action === 'V') {
-                alert(`Inserisci Voto per l'alunno nell'ora ${hourIndex}.`);
-                attendanceStatus[studentAttendanceKey][hourKey] = 'VOTO'; 
+        window.onclick = function(event) {
+            const confirmModal = document.getElementById('confirmModal');
+            if (event.target == confirmModal) {
+                closeModal('confirmModal');
             }
-            
-            document.getElementById('context-menu').style.display = 'none';
-            renderAttendance(); 
-            saveData();
         }
 
-        function applyGeneralAction(studentAttendanceKey, action) {
-            if (!attendanceStatus[studentAttendanceKey]) return;
-            
-            const totalHours = 7;
-            for (let i = 1; i <= totalHours; i++) {
-                const hourKey = `ora${i}`;
-                if (action === 'C') {
-                    attendanceStatus[studentAttendanceKey][hourKey] = '';
-                } else if (['P', 'A', 'R', 'US'].includes(action)) {
-                    attendanceStatus[studentAttendanceKey][hourKey] = action; 
-                }
-            }
-            
-            document.getElementById('context-menu').style.display = 'none';
-            renderAttendance();
-            saveData();
-        }
+        // --- INIZIALIZZAZIONE ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStudentRows();
+        });
 
-        function openContextMenu(e, targetElement) {
-            e.stopPropagation(); 
-
-            const contextMenu = document.getElementById('context-menu');
-            let studentAttendanceKey;
-            let hourIndex = targetElement.getAttribute('data-ora'); 
-
-            if (targetElement.classList.contains('dots-button')) {
-                const studentId = targetElement.getAttribute('data-student-id');
-                const formattedDate = currentDate.toISOString().split('T')[0];
-                studentAttendanceKey = `${studentId}_${formattedDate}`;
-                hourIndex = null; 
-            } else {
-                studentAttendanceKey = targetElement.getAttribute('data-target-student-key') || targetElement.getAttribute('data-student-key');
-            }
-
-            const rect = targetElement.getBoundingClientRect();
-            contextMenu.style.display = 'block';
-            
-            let topPos = rect.bottom + 5;
-            let leftPos = rect.left;
-
-            if (rect.right + 160 > window.innerWidth) { 
-                leftPos = rect.right - 160; 
-            }
-            
-            contextMenu.style.top = `${topPos}px`;
-            contextMenu.style.left = `${leftPos}px`;
-            
-            contextMenu.setAttribute('data-target-student-key', studentAttendanceKey);
-            
-            const noteVoteActions = contextMenu.querySelectorAll('[data-action="N"], [data-action="V"], [data-action="US"]');
-            
-            if (hourIndex) {
-                // Menu contestuale per cella (singola ora)
-                contextMenu.setAttribute('data-target-hour', hourIndex);
-                contextMenu.querySelectorAll('a').forEach(a => {
-                    const action = a.getAttribute('data-action');
-                    a.onclick = (event) => {
-                        event.preventDefault();
-                        applySingleAction(studentAttendanceKey, hourIndex, action);
-                    };
-                    noteVoteActions.forEach(a => a.style.display = 'block');
-                });
-
-            } else {
-                // Menu contestuale per riga (tutta la giornata)
-                contextMenu.removeAttribute('data-target-hour');
-                contextMenu.querySelectorAll('a').forEach(a => {
-                    const action = a.getAttribute('data-action');
-                    a.onclick = (event) => {
-                        event.preventDefault();
-                        applyGeneralAction(studentAttendanceKey, action);
-                    };
-                    // Nascondi Note/Voto per l'azione generale sulla riga
-                    if (['N', 'V', 'US'].includes(action)) {
-                        a.style.display = 'none';
-                    } else {
-                        a.style.display = 'block';
-                    }
-                });
-            }
-
-        }
-        
-        // Inizializzazione
-        function init() {
-            getClasseFromStorageOrUrl();
-            loadData();
-            renderStudentNames(classKey);
-            renderCalendar();
-        }
-
-        // Chiudi il menu contestuale se si clicca altrove
-        document.body.addEventListener('click', closeContextMenu);
-        
-        // Esponi le funzioni globali
-        window.changeMonth = changeMonth;
-        window.changeYear = changeYear;
-        window.openContextMenu = openContextMenu;
-        window.applyAllStudentsAction = applyAllStudentsAction;
-        window.clearAllAttendanceForDay = clearAllAttendanceForDay; 
-        
-        init();
+        // Espone le funzioni globali
+        window.togglePresence = togglePresence;
+        window.setAllPresences = setAllPresences;
     </script>
 </body>
 </html>
-
-
-
-
